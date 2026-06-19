@@ -1,0 +1,39 @@
+services:
+    frontend:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile.frontend
+        ports:
+            - '${FRONTEND_PORT:-3000}:3000'
+        env_file:
+            - ./frontend/.env.prod
+        depends_on:
+            - api
+
+    api:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile.api
+        ports:
+            - '${API_PORT:-8080}:80'
+        env_file:
+            - ./backend/.env.prod
+        depends_on:
+            pgsql:
+                condition: service_healthy
+
+    pgsql:
+        image: 'postgres:16-alpine'
+        env_file:
+            - ./backend/.env.prod
+        volumes:
+            - 'prod-pgsql:/var/lib/postgresql/data'
+        healthcheck:
+            test: ['CMD', 'pg_isready', '-q', '-d', 'books', '-U', 'sail']
+            retries: 5
+            timeout: 5s
+            interval: 5s
+
+volumes:
+    prod-pgsql:
+        driver: local

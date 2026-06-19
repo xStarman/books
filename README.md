@@ -48,3 +48,76 @@
 
 - Preencimento automatico utilizando busca pelo código isbn em uma api aberta como openlibrary.
 - Serviço python para leitura código de barras do isbn na imagem da capa do livro com fallback para OCR quando o código estiver disponível.
+
+# Subindo ambientes
+
+## Subindo ambiente de desenvolvimento local
+
+### Requisitos
+ - Docker com Docker compose
+ - NodeJs (Recomendado nvm)
+ - Wsl (Opcional)
+
+### Comandos:
+
+### Copie os env.example
+
+```bash
+  cp backend/.env.example backend/.env && cp frontend/.env.example frontend/.env.local
+```
+
+### Para subir o backend:
+
+```bash
+  docker compose up -d
+```
+
+### Migrations (Cria tabelas do banco de dados)
+
+```bash
+  docker exec -it app php artisan migrate
+```
+
+### Gerar Documentação (l5-swagger, opcional)
+
+```bash
+  docker exec -it app php artisan l5-swagger:generate
+```
+> Acessível em <BaseApi>/api/documentation
+
+### Seeders (Gera dados falsos para desenvolvimento, opcional)
+
+```bash
+  docker exec -it app php artisan db:seed
+```
+
+### Gerar chave de aplicação (APP_KEY) no .env (opcional)
+
+```bash
+  docker exec -it app php artisan key:generate
+```
+
+### Para subir o frontend
+
+```bash
+  cd frontend && npm install && npm run dev
+```
+
+## Subindo ambiente de produção
+
+### Comandos:
+
+### Copie os env.example
+
+```bash
+  cp backend/.env.example backend/.env.prod && cp frontend/.env.example frontend/.env.prod
+```
+
+```bash
+  docker compose -f docker-compose.prod.yml up -d --build
+```
+
+> O .env.prod (back e front) são apenas uma opção para configurar as variáveis de ambiente mas é recomendado configurar no host como variáveis de ambiente.
+> O frontend já está previsto neste docker-compose.prod.yml, ele será buildado e servido em um container dedicado, não sendo necessário subir manualmente.
+
+
