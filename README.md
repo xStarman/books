@@ -84,6 +84,7 @@
   docker exec -it app php artisan l5-swagger:generate
 ```
 > Acessível em <BaseApi>/api/documentation
+> Documentação do l5-swagger: https://github.com/DarkaOnLine/L5-Swagger/wiki
 
 ### Seeders (Gera dados falsos para desenvolvimento, opcional)
 
