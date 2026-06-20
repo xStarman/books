@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Title } from "../components/base/title";
-import { Table } from "../components/base/table";
 import { BookList } from "../components/books/books-list";
 
 export default function Home() {

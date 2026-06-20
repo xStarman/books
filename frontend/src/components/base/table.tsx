@@ -6,6 +6,8 @@ export type Column<T> = {
     label: string
     sortable?: boolean
     render?: (row: T) => React.ReactNode
+    sticky?: 'left' | 'right'
+    width?: string
 }
 
 export type SortOrder = 'asc' | 'desc'
@@ -17,6 +19,7 @@ export type TableProps<T> = {
     sortOrder?: SortOrder
     onSort?: (column: string, order: SortOrder) => void
     pagination?: PaginationProps
+    isLoading?: boolean
 }
 
 export const Table = <T extends Record<string, any>>({
@@ -25,7 +28,8 @@ export const Table = <T extends Record<string, any>>({
     sortColumn,
     sortOrder,
     onSort,
-    pagination
+    pagination,
+    isLoading,
 }: TableProps<T>) => {
 
     const handleSort = (columnKey: string) => {
@@ -39,8 +43,15 @@ export const Table = <T extends Record<string, any>>({
     }
 
     return (
-        <>
-            <div className="table-responsive">
+        <div className="position-relative d-flex flex-column flex-1">
+            {isLoading && (
+                <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-light bg-opacity-75" style={{ zIndex: 10 }}>
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            )}
+            <div className="table-responsive flex-1 overflow-y-auto">
                 <table className="table table-striped table-hover align-middle">
                     <thead>
                         <tr>
@@ -48,7 +59,17 @@ export const Table = <T extends Record<string, any>>({
                                 <th
                                     key={col.key}
                                     scope="col"
-                                    style={{ cursor: col.sortable ? 'pointer' : 'default', userSelect: 'none' }}
+                                    style={{
+                                        cursor: col.sortable ? 'pointer' : 'default',
+                                        userSelect: 'none',
+                                        position: 'sticky',
+                                        top: 0,
+                                        zIndex: col.sticky ? 2 : 1,
+                                        backgroundColor: 'var(--bs-body-bg, #fff)',
+                                        left: col.sticky === 'left' ? '0' : undefined,
+                                        right: col.sticky === 'right' ? '0' : undefined,
+                                        width: col.width ? col.width : undefined
+                                    }}
                                     onClick={() => col.sortable && handleSort(col.key)}
                                 >
                                     <div className="d-flex align-items-center gap-1">
@@ -80,7 +101,14 @@ export const Table = <T extends Record<string, any>>({
                             data.map((row, rowIndex) => (
                                 <tr key={rowIndex}>
                                     {columns.map(col => (
-                                        <td key={col.key}>
+                                        <td key={col.key} style={{
+                                            whiteSpace: 'nowrap',
+                                            left: col.sticky === 'left' ? '0' : undefined,
+                                            right: col.sticky === 'right' ? '0' : undefined,
+                                            position: col.sticky ? 'sticky' : undefined,
+                                            zIndex: col.sticky ? 1 : undefined,
+                                            width: col.width ? col.width : undefined
+                                        }}>
                                             {col.render ? col.render(row) : row[col.key]}
                                         </td>
                                     ))}
@@ -96,6 +124,6 @@ export const Table = <T extends Record<string, any>>({
                     <Pagination {...pagination} />
                 </div>
             )}
-        </>
+        </div>
     )
 }

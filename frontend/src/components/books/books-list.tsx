@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getBookList } from "../../lib/get-book-list";
 import { Book } from "../../lib/entities/book.entity";
+import { moneyFormat } from "../../utils/money-format";
 
 export const BookList: React.FC = () => {
     const [page, setPage] = useState(1);
@@ -19,7 +20,7 @@ export const BookList: React.FC = () => {
     });
 
     const columns: Column<Book>[] = [
-        { key: "CodL", label: "Código", sortable: true },
+        { key: "CodL", label: "Código", sortable: true, width: '80px' },
         { key: "Titulo", label: "Título", sortable: true },
         { key: "Editora", label: "Editora", sortable: true },
         { key: "Edicao", label: "Edição", sortable: true },
@@ -28,7 +29,7 @@ export const BookList: React.FC = () => {
             key: "Preco",
             label: "Preço",
             sortable: true,
-            render: (row) => `R$ ${Number(row.Preco).toFixed(2)}`
+            render: (row) => moneyFormat(Number(row.Preco))
         },
         {
             key: "actions",
@@ -38,7 +39,9 @@ export const BookList: React.FC = () => {
                     <button className="btn btn-sm btn-outline-primary"><i className="bi bi-pencil"></i></button>
                     <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash"></i></button>
                 </div>
-            )
+            ),
+            width: '100px',
+            sticky: 'right'
         }
     ];
 
@@ -52,20 +55,14 @@ export const BookList: React.FC = () => {
     }
 
     return (
-        <div style={{ position: 'relative' }}>
-            {(isLoading || isFetching) && (
-                <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-light bg-opacity-75" style={{ zIndex: 10 }}>
-                    <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Carregando...</span>
-                    </div>
-                </div>
-            )}
+        <div className="flex-1 mb-5 d-flex flex-column">
             <Table<Book>
                 columns={columns}
                 data={data?.data || []}
                 sortColumn={sortCol}
                 sortOrder={sortOrder}
                 onSort={handleSort}
+                isLoading={isLoading || isFetching}
                 pagination={{
                     currentPage: data?.current_page || 1,
                     totalPages: data?.last_page || 1,
