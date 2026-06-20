@@ -4,6 +4,11 @@
 
 - CRUD de livros utilizando tecnologias web
 
+### Base visual
+  - https://www.figma.com/proto/w6oLScKA8GRxwVhKAVaoWZ/Bootstrap-5-Design-System---UI-Kit--Community-?node-id=6502-1489&t=3DJHePQgB1963SGX-1
+  
+> protótipo com telas base para referencia visual no desenvolvimento (Cadastro de livros e relatório)
+
 ### Exigencias mínimas:
 
 - CRUD de Livro, Autor e Assunto (Categoria) com pelo menos um relatório utilizando algum componente de relatório (Crystal, ReportView ou outro) alimentado por uma view.
@@ -31,7 +36,7 @@
 - CRUD de Assuntos:
   - Formulário com campos CodAs (pk, autoincrement) e Descricao (varchar(20))
 - CRUD de Livros:
-  - Formulário com campos CodL (pk, autoincrement), Titulo (varchar(20)), Editora (varchar(40)), Edicao (int), AnoPublicacao (SMALLINT\*)
+  - Formulário com campos CodL (pk, autoincrement), Titulo (varchar(20)), Editora (varchar(40)), Edicao (int), AnoPublicacao (SMALLINT\*) e Preço (decimal(10,2))
 - Relatórios:
 - Página de relatório de livros com filtros por Autor, Assunto, Ano de publicacao, Editora e Edicao permitindo a combinação de multiplos filtros e exportação para excel.
 
