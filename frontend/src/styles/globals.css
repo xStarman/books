@@ -17,3 +17,29 @@ body,
     min-height: 0;
     min-width: 0;
 }
+
+/* Table Sticky Columns Shadows */
+.sticky-column {
+    background-color: var(--bs-body-bg, #fff) !important;
+    background-clip: padding-box;
+}
+.sticky-left-shadow::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -10px;
+    width: 10px;
+    box-shadow: inset 5px 0 8px -4px rgba(0,0,0,0.15);
+    pointer-events: none;
+}
+.sticky-right-shadow::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -10px;
+    width: 10px;
+    box-shadow: inset -5px 0 8px -4px rgba(0,0,0,0.15);
+    pointer-events: none;
+}

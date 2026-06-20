@@ -2,7 +2,12 @@ import { api, objectToUri } from './api';
 import { Paginated, PaginationCursor } from './base-response-types';
 import { Book } from './entities/book.entity';
 
-export interface ListBooksRequest extends PaginationCursor<Book> { }
+export interface ListBooksRequest extends Omit<PaginationCursor<Book>, 'filters'> {
+    filters?: PaginationCursor<Book>['filters'] & {
+        Autor?: number;
+        Assunto?: number;
+    };
+}
 
 export interface ListBooksResponse extends Paginated<Book> { }
 

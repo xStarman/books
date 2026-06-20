@@ -19,6 +19,8 @@ class ListBooksController extends Controller
             new OA\Parameter(name: 'filters[Editora]', description: 'Filtrar por editora', in: 'query', required: false, schema: new OA\Schema(type: 'string')),
             new OA\Parameter(name: 'filters[Edicao]', description: 'Filtrar por edição', in: 'query', required: false, schema: new OA\Schema(type: 'integer')),
             new OA\Parameter(name: 'filters[AnoPublicacao]', description: 'Filtrar por ano de publicação', in: 'query', required: false, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'filters[Autor]', description: 'Filtrar por autor', in: 'query', required: false, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'filters[Assunto]', description: 'Filtrar por assunto', in: 'query', required: false, schema: new OA\Schema(type: 'integer')),
             new OA\Parameter(name: 'order[CodL]', description: 'Ordenar por código', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['asc', 'desc'])),
             new OA\Parameter(name: 'order[Titulo]', description: 'Ordenar por título', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['asc', 'desc'])),
             new OA\Parameter(name: 'order[Editora]', description: 'Ordenar por editora', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['asc', 'desc'])),

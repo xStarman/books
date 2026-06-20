@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Pagination, PaginationProps } from './pagination'
 
 export type Column<T> = {
@@ -22,7 +22,7 @@ export type TableProps<T> = {
     isLoading?: boolean
 }
 
-export const Table = <T extends Record<string, any>>({
+export const Table = <T extends Record<string, any>,>({
     columns,
     data,
     sortColumn,
@@ -42,6 +42,24 @@ export const Table = <T extends Record<string, any>>({
         }
     }
 
+    const tableContainerRef = useRef<HTMLDivElement>(null)
+    const [scrollState, setScrollState] = useState({ left: false, right: false })
+
+    const checkScroll = useCallback(() => {
+        if (!tableContainerRef.current) return
+        const { scrollLeft, scrollWidth, clientWidth } = tableContainerRef.current
+        setScrollState({
+            left: scrollLeft > 0,
+            right: Math.ceil(scrollLeft + clientWidth) < scrollWidth
+        })
+    }, [])
+
+    useEffect(() => {
+        checkScroll()
+        window.addEventListener('resize', checkScroll)
+        return () => window.removeEventListener('resize', checkScroll)
+    }, [checkScroll, data])
+
     return (
         <div className="position-relative d-flex flex-column flex-1">
             {isLoading && (
@@ -51,27 +69,32 @@ export const Table = <T extends Record<string, any>>({
                     </div>
                 </div>
             )}
-            <div className="table-responsive flex-1 overflow-y-auto">
+            <div className="table-responsive flex-1 overflow-y-auto" ref={tableContainerRef} onScroll={checkScroll}>
                 <table className="table table-striped table-hover align-middle">
                     <thead>
                         <tr>
-                            {columns.map(col => (
-                                <th
-                                    key={col.key}
-                                    scope="col"
-                                    style={{
-                                        cursor: col.sortable ? 'pointer' : 'default',
-                                        userSelect: 'none',
-                                        position: 'sticky',
-                                        top: 0,
-                                        zIndex: col.sticky ? 2 : 1,
-                                        backgroundColor: 'var(--bs-body-bg, #fff)',
-                                        left: col.sticky === 'left' ? '0' : undefined,
-                                        right: col.sticky === 'right' ? '0' : undefined,
-                                        width: col.width ? col.width : undefined
-                                    }}
-                                    onClick={() => col.sortable && handleSort(col.key)}
-                                >
+                            {columns.map(col => {
+                                let className = col.sticky ? "sticky-column" : "";
+                                if (col.sticky === 'left' && scrollState.left) className += " sticky-left-shadow";
+                                if (col.sticky === 'right' && scrollState.right) className += " sticky-right-shadow";
+
+                                return (
+                                    <th
+                                        key={col.key}
+                                        scope="col"
+                                        className={className}
+                                        style={{
+                                            cursor: col.sortable ? 'pointer' : 'default',
+                                            userSelect: 'none',
+                                            position: 'sticky',
+                                            top: 0,
+                                            zIndex: col.sticky ? 2 : 1,
+                                            left: col.sticky === 'left' ? '0' : undefined,
+                                            right: col.sticky === 'right' ? '0' : undefined,
+                                            width: col.width ? col.width : undefined,
+                                        }}
+                                        onClick={() => col.sortable && handleSort(col.key)}
+                                    >
                                     <div className="d-flex align-items-center gap-1">
                                         {col.label}
                                         {col.sortable && (
@@ -87,7 +110,8 @@ export const Table = <T extends Record<string, any>>({
                                         )}
                                     </div>
                                 </th>
-                            ))}
+                                );
+                            })}
                         </tr>
                     </thead>
                     <tbody className="table-group-divider">
@@ -100,18 +124,24 @@ export const Table = <T extends Record<string, any>>({
                         ) : (
                             data.map((row, rowIndex) => (
                                 <tr key={rowIndex}>
-                                    {columns.map(col => (
-                                        <td key={col.key} style={{
-                                            whiteSpace: 'nowrap',
-                                            left: col.sticky === 'left' ? '0' : undefined,
-                                            right: col.sticky === 'right' ? '0' : undefined,
-                                            position: col.sticky ? 'sticky' : undefined,
-                                            zIndex: col.sticky ? 1 : undefined,
-                                            width: col.width ? col.width : undefined
-                                        }}>
-                                            {col.render ? col.render(row) : row[col.key]}
-                                        </td>
-                                    ))}
+                                    {columns.map(col => {
+                                        let className = col.sticky ? "sticky-column" : "";
+                                        if (col.sticky === 'left' && scrollState.left) className += " sticky-left-shadow";
+                                        if (col.sticky === 'right' && scrollState.right) className += " sticky-right-shadow";
+
+                                        return (
+                                            <td key={col.key} className={className} style={{
+                                                whiteSpace: 'nowrap',
+                                                left: col.sticky === 'left' ? '0' : undefined,
+                                                right: col.sticky === 'right' ? '0' : undefined,
+                                                position: col.sticky ? 'sticky' : undefined,
+                                                zIndex: col.sticky ? 1 : undefined,
+                                                width: col.width ? col.width : undefined,
+                                            }}>
+                                                {col.render ? col.render(row) : row[col.key]}
+                                            </td>
+                                        );
+                                    })}
                                 </tr>
                             ))
                         )}

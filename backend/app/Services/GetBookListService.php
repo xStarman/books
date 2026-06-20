@@ -2,27 +2,21 @@
 
 namespace App\Services;
 
-use App\Models\Livro;
+use App\DTOs\BookFiltersDTO;
+use App\DTOs\OrderDTO;
+use App\Repositories\BookRepository;
 
 class GetBookListService
 {
+    public function __construct(
+        private readonly BookRepository $repository
+    ) {}
+
     public function execute(array $filters = [], array $order = [], int $pageSize = 25)
     {
-        $query = Livro::query();
+        $filtersDTO = BookFiltersDTO::fromArray($filters);
+        $ordersDTO = OrderDTO::fromArray($order);
 
-        $query->when(isset($filters['Titulo']), fn($q) => $q->where('Titulo', 'like', "%{$filters['Titulo']}%"));
-        $query->when(isset($filters['Editora']), fn($q) => $q->where('Editora', 'like', "%{$filters['Editora']}%"));
-        $query->when(isset($filters['Edicao']), fn($q) => $q->where('Edicao', $filters['Edicao']));
-        $query->when(isset($filters['AnoPublicacao']), fn($q) => $q->where('AnoPublicacao', $filters['AnoPublicacao']));
-
-        if (!empty($order)) {
-            foreach ($order as $field => $direction) {
-                $query->orderBy($field, $direction);
-            }
-        } else {
-            $query->orderBy('Titulo', 'asc');
-        }
-
-        return $query->paginate($pageSize);
+        return $this->repository->getFilteredQuery($filtersDTO, $ordersDTO)->paginate($pageSize);
     }
 }

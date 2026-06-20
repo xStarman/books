@@ -6,17 +6,17 @@ use App\DTOs\AuthorFiltersDTO;
 use App\DTOs\OrderDTO;
 use App\Repositories\AuthorRepository;
 
-class GetAuthorListService
+class GetAllAuthorsService
 {
     public function __construct(
         private readonly AuthorRepository $repository
     ) {}
 
-    public function execute(array $filters = [], array $order = [], int $pageSize = 25)
+    public function execute(array $filters = [], array $order = [])
     {
         $filtersDTO = AuthorFiltersDTO::fromArray($filters);
         $ordersDTO = OrderDTO::fromArray($order);
 
-        return $this->repository->getFilteredQuery($filtersDTO, $ordersDTO)->paginate($pageSize);
+        return $this->repository->getFilteredQuery($filtersDTO, $ordersDTO)->get();
     }
 }

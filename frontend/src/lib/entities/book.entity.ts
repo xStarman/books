@@ -1,3 +1,6 @@
+import { Author } from "./author.entity";
+import { Subject } from "./subject.entity";
+
 export type Book = {
     CodL: number
     Titulo: string
@@ -5,4 +8,6 @@ export type Book = {
     Edicao: number
     AnoPublicacao: number
     Preco: number
+    autores?: Author[]
+    assuntos?: Subject[]
 }
