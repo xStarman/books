@@ -70,7 +70,7 @@ export const Table = <T extends Record<string, any>,>({
                 </div>
             )}
             <div className="table-responsive flex-1 overflow-y-auto" ref={tableContainerRef} onScroll={checkScroll}>
-                <table className="table table-striped table-hover align-middle">
+                <table className="table table-striped table-hover align-top">
                     <thead>
                         <tr>
                             {columns.map(col => {
@@ -95,21 +95,21 @@ export const Table = <T extends Record<string, any>,>({
                                         }}
                                         onClick={() => col.sortable && handleSort(col.key)}
                                     >
-                                    <div className="d-flex align-items-center gap-1">
-                                        {col.label}
-                                        {col.sortable && (
-                                            <span className="text-muted">
-                                                {sortColumn === col.key ? (
-                                                    sortOrder === 'asc'
-                                                        ? <i className="bi bi-caret-up-fill text-primary"></i>
-                                                        : <i className="bi bi-caret-down-fill text-primary"></i>
-                                                ) : (
-                                                    <i className="bi bi-arrow-down-up opacity-25"></i>
-                                                )}
-                                            </span>
-                                        )}
-                                    </div>
-                                </th>
+                                        <div className="d-flex align-items-center gap-1">
+                                            {col.label}
+                                            {col.sortable && (
+                                                <span className="text-muted">
+                                                    {sortColumn === col.key ? (
+                                                        sortOrder === 'asc'
+                                                            ? <i className="bi bi-caret-up-fill text-primary"></i>
+                                                            : <i className="bi bi-caret-down-fill text-primary"></i>
+                                                    ) : (
+                                                        <i className="bi bi-arrow-down-up opacity-25"></i>
+                                                    )}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </th>
                                 );
                             })}
                         </tr>

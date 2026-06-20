@@ -6,6 +6,7 @@ import { Book } from "../../lib/entities/book.entity";
 import { Author } from "../../lib/entities/author.entity";
 import { moneyFormat } from "../../utils/money-format";
 import { BookListFilters, BookFiltersData } from "./book-list-filters";
+import Link from "next/link";
 
 const AuthorCell = ({ autores }: { autores?: Author[] }) => {
     const [expanded, setExpanded] = useState(false);
@@ -105,7 +106,9 @@ export const BookList: React.FC = () => {
             label: "Ações",
             render: (row) => (
                 <div className="d-flex gap-2">
-                    <button className="btn btn-sm btn-outline-primary"><i className="bi bi-pencil"></i></button>
+                    <Link href={`/livros/${row.CodL}`} className="btn btn-sm btn-outline-primary">
+                        <i className="bi bi-pencil"></i>
+                    </Link>
                     <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash"></i></button>
                 </div>
             ),
