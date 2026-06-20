@@ -1,51 +1,77 @@
-import Link from "next/link";
-import { Table } from "../base/table";
+import { Table, Column, SortOrder } from "../base/table";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getBookList, ListBooksResponse } from "../../lib/get-book-list";
+import { getBookList } from "../../lib/get-book-list";
+import { Book } from "../../lib/entities/book.entity";
 
 export const BookList: React.FC = () => {
+    const [page, setPage] = useState(1);
+    const [sortCol, setSortCol] = useState<string>("Titulo");
+    const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
-    const { data, isLoading, isFetching, error } = useQuery<ListBooksResponse>({
-        queryKey: ['all-features'],
-        queryFn: async () => getBookList(),
+    const { data, isLoading, isFetching, error } = useQuery({
+        queryKey: ['books', page, sortCol, sortOrder],
+        queryFn: async () => getBookList({
+            page,
+            page_size: 25,
+            order: { [sortCol]: sortOrder }
+        }),
     });
 
-    const onPageChange = (page: number) => {
-        console.log(page)
+    const columns: Column<Book>[] = [
+        { key: "CodL", label: "Código", sortable: true },
+        { key: "Titulo", label: "Título", sortable: true },
+        { key: "Editora", label: "Editora", sortable: true },
+        { key: "Edicao", label: "Edição", sortable: true },
+        { key: "AnoPublicacao", label: "Ano", sortable: true },
+        {
+            key: "Preco",
+            label: "Preço",
+            sortable: true,
+            render: (row) => `R$ ${Number(row.Preco).toFixed(2)}`
+        },
+        {
+            key: "actions",
+            label: "Ações",
+            render: (row) => (
+                <div className="d-flex gap-2">
+                    <button className="btn btn-sm btn-outline-primary"><i className="bi bi-pencil"></i></button>
+                    <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash"></i></button>
+                </div>
+            )
+        }
+    ];
+
+    const handleSort = (column: string, order: SortOrder) => {
+        setSortCol(column);
+        setSortOrder(order);
+    };
+
+    if (error) {
+        return <div className="alert alert-danger">Erro ao carregar livros.</div>;
     }
 
-    return <>
-        <Table
-            columns={[
-                {
-                    key: "title",
-                    label: "Título",
-                    sortable: true,
-                },
-                {
-                    key: "author",
-                    label: "Autor",
-                    sortable: true,
-                },
-                {
-                    key: "year",
-                    label: "Ano",
-                    sortable: true,
-                },
-            ]}
-            data={[
-                {
-                    title: "Livro 1",
-                    author: "Autor 1",
-                    year: 2022,
-                },
-                {
-                    title: "Livro 2",
-                    author: "Autor 2",
-                    year: 2023,
-                },
-            ]}
-        />
-    </>;
+    return (
+        <div style={{ position: 'relative' }}>
+            {(isLoading || isFetching) && (
+                <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-light bg-opacity-75" style={{ zIndex: 10 }}>
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            )}
+            <Table<Book>
+                columns={columns}
+                data={data?.data || []}
+                sortColumn={sortCol}
+                sortOrder={sortOrder}
+                onSort={handleSort}
+                pagination={{
+                    currentPage: data?.current_page || 1,
+                    totalPages: data?.last_page || 1,
+                    onPageChange: (p) => setPage(p)
+                }}
+            />
+        </div>
+    );
 }

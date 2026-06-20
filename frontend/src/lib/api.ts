@@ -19,7 +19,5 @@ export const objectToUri = (obj?: any, prefix = ''): string => {
 
 export const api = axios.create({
     baseURL: API_URL,
-    withCredentials: true,
-    withXSRFToken: true,
     timeout: 0,
 });

@@ -41,7 +41,7 @@ export const Table = <T extends Record<string, any>>({
     return (
         <>
             <div className="table-responsive">
-                <table className="table table-hover align-middle">
+                <table className="table table-striped table-hover align-middle">
                     <thead>
                         <tr>
                             {columns.map(col => (
@@ -54,7 +54,7 @@ export const Table = <T extends Record<string, any>>({
                                     <div className="d-flex align-items-center gap-1">
                                         {col.label}
                                         {col.sortable && (
-                                            <span className="text-muted" style={{ fontSize: '0.8em' }}>
+                                            <span className="text-muted">
                                                 {sortColumn === col.key ? (
                                                     sortOrder === 'asc'
                                                         ? <i className="bi bi-caret-up-fill text-primary"></i>
