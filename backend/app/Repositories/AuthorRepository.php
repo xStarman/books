@@ -17,7 +17,7 @@ class AuthorRepository
     {
         $query = Autor::query();
 
-        $query->when($filters->Nome, fn($q, $nome) => $q->where('Nome', 'like', "%{$nome}%"));
+        $query->when($filters->Nome, fn($q, $nome) => $q->where('Nome', 'ilike', "%{$nome}%"));
 
         if (!empty($orders)) {
             foreach ($orders as $order) {

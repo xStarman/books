@@ -17,7 +17,7 @@ class SubjectRepository
     {
         $query = Assunto::query();
 
-        $query->when($filters->Descricao, fn($q, $descricao) => $q->where('Descricao', 'like', "%{$descricao}%"));
+        $query->when($filters->Descricao, fn($q, $descricao) => $q->where('Descricao', 'ilike', "%{$descricao}%"));
 
         if (!empty($orders)) {
             foreach ($orders as $order) {

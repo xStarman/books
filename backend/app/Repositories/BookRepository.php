@@ -17,8 +17,8 @@ class BookRepository
     {
         $query = Livro::with(['autores', 'assuntos']);
 
-        $query->when($filters->Titulo, fn($q, $titulo) => $q->where('Titulo', 'like', "%{$titulo}%"));
-        $query->when($filters->Editora, fn($q, $editora) => $q->where('Editora', 'like', "%{$editora}%"));
+        $query->when($filters->Titulo, fn($q, $titulo) => $q->where('Titulo', 'ilike', "%{$titulo}%"));
+        $query->when($filters->Editora, fn($q, $editora) => $q->where('Editora', 'ilike', "%{$editora}%"));
         $query->when($filters->Edicao !== null, fn($q) => $q->where('Edicao', $filters->Edicao));
         $query->when($filters->AnoPublicacao !== null, fn($q) => $q->where('AnoPublicacao', $filters->AnoPublicacao));
         

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAuthorList, ListAuthorsRequest } from "../../lib/get-author-list";
 import { Author } from "../../lib/entities/author.entity";
+import { AuthorListFilters, AuthorFiltersData } from "./author-list-filters";
 
 export const AuthorList = () => {
     const [requestParams, setRequestParams] = useState<ListAuthorsRequest>({
@@ -47,6 +48,18 @@ export const AuthorList = () => {
         setRequestParams(prev => ({ ...prev, page }));
     };
 
+    const handleFilterChange = (filters: AuthorFiltersData) => {
+        const cleanFilters = Object.fromEntries(
+            Object.entries(filters).filter(([_, v]) => v !== "" && v != null)
+        );
+
+        setRequestParams(prev => ({
+            ...prev,
+            filters: Object.keys(cleanFilters).length > 0 ? cleanFilters : undefined,
+            page: 1
+        }));
+    };
+
     if (isError) return <div className="alert alert-danger m-3">Erro ao carregar autores.</div>;
 
     const sortColumn = requestParams.order ? Object.keys(requestParams.order)[0] : undefined;
@@ -54,6 +67,7 @@ export const AuthorList = () => {
 
     return (
         <div className="flex-1 mb-5 d-flex flex-column">
+            <AuthorListFilters onFilterChange={handleFilterChange} />
             <Table
                 columns={columns}
                 data={data?.data || []}

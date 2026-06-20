@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getSubjectList, ListSubjectsRequest } from "../../lib/get-subject-list";
 import { Subject } from "../../lib/entities/subject.entity";
+import { SubjectListFilters, SubjectFiltersData } from "./subject-list-filters";
 
 export const SubjectList = () => {
     const [requestParams, setRequestParams] = useState<ListSubjectsRequest>({
@@ -47,6 +48,17 @@ export const SubjectList = () => {
         setRequestParams(prev => ({ ...prev, page }));
     };
 
+    const handleFilterChange = (filters: SubjectFiltersData) => {
+        const cleanFilters = Object.fromEntries(
+            Object.entries(filters).filter(([_, v]) => v !== "" && v != null)
+        );
+
+        setRequestParams(prev => ({
+            ...prev,
+            filters: Object.keys(cleanFilters).length > 0 ? cleanFilters : undefined,
+            page: 1
+        }));
+    };
 
     if (isError) return <div className="alert alert-danger m-3">Erro ao carregar assuntos.</div>;
 
@@ -55,6 +67,7 @@ export const SubjectList = () => {
 
     return (
         <div className="flex-1 mb-5 d-flex flex-column">
+            <SubjectListFilters onFilterChange={handleFilterChange} />
             <Table
                 columns={columns}
                 data={data?.data || []}
