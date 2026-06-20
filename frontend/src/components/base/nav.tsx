@@ -18,7 +18,7 @@ export const Nav: React.FC<NavProps> = () => {
     const links: NavLink[] = [
         { label: 'Livros', href: '/' },
         { label: 'Autores', href: '/autores' },
-        { label: 'Categorias', href: '/categorias' },
+        { label: 'Assuntos', href: '/assuntos' },
         {
             label: 'Relatórios', items: [
                 { label: 'Relatório de livros', href: '/relatorios/livros' },

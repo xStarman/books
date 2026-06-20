@@ -11,7 +11,7 @@
 
 ### Exigencias mínimas:
 
-- CRUD de Livro, Autor e Assunto (Categoria) com pelo menos um relatório utilizando algum componente de relatório (Crystal, ReportView ou outro) alimentado por uma view.
+- CRUD de Livro, Autor e Assunto com pelo menos um relatório utilizando algum componente de relatório (Crystal, ReportView ou outro) alimentado por uma view.
 - Testes unitários com coverage mínimo de 99%.
 - Tratamento de erros bem estruturado.
 - Validações e formatação de valores.
