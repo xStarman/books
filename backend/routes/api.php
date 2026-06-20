@@ -10,11 +10,13 @@ use App\Http\Controllers\GetAllSubjectsController;
 use App\Http\Controllers\StoreBookController;
 use App\Http\Controllers\UpdateBookController;
 use App\Http\Controllers\GetBookByIdController;
+use App\Http\Controllers\DeleteBookController;
 
 Route::get('/books', ListBooksController::class);
 Route::post('/books', StoreBookController::class);
 Route::get('/books/{id}', GetBookByIdController::class)->where('id', '[0-9]+');
 Route::put('/books/{id}', UpdateBookController::class)->where('id', '[0-9]+');
+Route::delete('/books/{id}', DeleteBookController::class)->where('id', '[0-9]+');
 
 Route::get('/authors/all', GetAllAuthorsController::class);
 Route::get('/authors', ListAuthorsController::class);

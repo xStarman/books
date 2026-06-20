@@ -2,15 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Livro;
+use App\Services\GetBookByIdService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use OpenApi\Attributes as OA;
 
 class GetBookByIdController extends Controller
 {
-    public function __invoke(int $id): JsonResponse
+    #[OA\Get(
+        path: '/api/books/{id}',
+        summary: 'Obtém um livro pelo código',
+        tags: ['Livros'],
+        parameters: [
+            new OA\Parameter(name: 'id', description: 'Código do livro', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Dados do livro',
+                content: new OA\JsonContent(ref: '#/components/schemas/BookSchema')
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Livro não encontrado'
+            )
+        ]
+    )]
+    public function __invoke(int $id, GetBookByIdService $service): JsonResponse
     {
-        $livro = Livro::with(['autores', 'assuntos'])->findOrFail($id);
+        $livro = $service->execute($id);
         return response()->json($livro);
     }
 }

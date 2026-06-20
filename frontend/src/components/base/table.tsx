@@ -50,7 +50,7 @@ export const Table = <T extends Record<string, any>,>({
         const { scrollLeft, scrollWidth, clientWidth } = tableContainerRef.current
         setScrollState({
             left: scrollLeft > 0,
-            right: Math.ceil(scrollLeft + clientWidth) < scrollWidth
+            right: Math.ceil(scrollLeft + clientWidth) < scrollWidth - 10
         })
     }, [])
 

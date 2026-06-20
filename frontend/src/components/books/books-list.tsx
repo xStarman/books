@@ -1,12 +1,15 @@
 import { Table, Column, SortOrder } from "../base/table";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getBookList } from "../../lib/get-book-list";
+import { deleteBook } from "../../lib/delete-book";
 import { Book } from "../../lib/entities/book.entity";
 import { Author } from "../../lib/entities/author.entity";
 import { moneyFormat } from "../../utils/money-format";
 import { BookListFilters, BookFiltersData } from "./book-list-filters";
 import Link from "next/link";
+import { ConfirmModal } from "../base/confirm-modal";
+import { toast } from "react-toastify";
 
 const AuthorCell = ({ autores }: { autores?: Author[] }) => {
     const [expanded, setExpanded] = useState(false);
@@ -50,9 +53,11 @@ const AuthorCell = ({ autores }: { autores?: Author[] }) => {
 };
 
 export const BookList: React.FC = () => {
+    const queryClient = useQueryClient();
     const [page, setPage] = useState(1);
     const [sortCol, setSortCol] = useState<string>("Titulo");
     const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+    const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
     const [filters, setFilters] = useState<BookFiltersData>({});
 
@@ -68,6 +73,19 @@ export const BookList: React.FC = () => {
             order: { [sortCol]: sortOrder },
             filters: cleanFilters as any
         }),
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: (id: number) => deleteBook(id),
+        onSuccess: () => {
+            toast.success("Livro excluído com sucesso!");
+            queryClient.invalidateQueries({ queryKey: ['books'] });
+            setBookToDelete(null);
+        },
+        onError: () => {
+            toast.error("Erro ao excluir o livro. Tente novamente.");
+            setBookToDelete(null);
+        }
     });
 
     const columns: Column<Book>[] = [
@@ -109,7 +127,12 @@ export const BookList: React.FC = () => {
                     <Link href={`/livros/${row.CodL}`} className="btn btn-sm btn-outline-primary">
                         <i className="bi bi-pencil"></i>
                     </Link>
-                    <button className="btn btn-sm btn-outline-danger"><i className="bi bi-trash"></i></button>
+                    <button 
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => setBookToDelete(row)}
+                    >
+                        <i className="bi bi-trash"></i>
+                    </button>
                 </div>
             ),
             width: '100px',
@@ -146,6 +169,15 @@ export const BookList: React.FC = () => {
                     totalPages: data?.last_page || 1,
                     onPageChange: (p) => setPage(p)
                 }}
+            />
+
+            <ConfirmModal 
+                isOpen={bookToDelete !== null}
+                title="Excluir Livro"
+                message={<>Tem certeza que deseja excluir o livro <strong>{bookToDelete?.Titulo}</strong>?</>}
+                onConfirm={() => bookToDelete && deleteMutation.mutate(bookToDelete.CodL)}
+                onCancel={() => setBookToDelete(null)}
+                isConfirming={deleteMutation.isPending}
             />
         </div>
     );
