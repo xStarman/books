@@ -44,14 +44,30 @@ test_back:
     - php artisan migrate --force
     - php artisan test
 
-deploy:
+deploy_front:
   stage: deploy
   image: docker:cli
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - frontend/**/*
+        - docker-compose.prod.yml
+        - .gitlab-ci.yml
   script:
-    - echo "Deploy"
+    - echo "Deploy Frontend"
     - cp "$FRONTEND_ENV_PROD" frontend/.env.prod
+    - docker compose -f docker-compose.prod.yml up -d --build frontend
+
+deploy_back:
+  stage: deploy
+  image: docker:cli
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - backend/**/*
+        - docker-compose.prod.yml
+        - .gitlab-ci.yml
+  script:
+    - echo "Deploy Backend"
     - cp "$BACKEND_ENV_PROD" backend/.env.prod
-    - docker compose -f docker-compose.prod.yml down || true
-    - docker compose -f docker-compose.prod.yml up -d --build
+    - docker compose -f docker-compose.prod.yml up -d --build api pgsql
