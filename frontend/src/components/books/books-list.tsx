@@ -1,4 +1,5 @@
 import { Table, Column, SortOrder } from "../base/table";
+import * as React from "react";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getBookList } from "../../lib/get-book-list";
@@ -145,10 +146,10 @@ export const BookList: React.FC = () => {
         setSortOrder(order);
     };
 
-    const handleFilterChange = (newFilters: BookFiltersData) => {
+    const handleFilterChange = React.useCallback((newFilters: BookFiltersData) => {
         setFilters(newFilters);
         setPage(1);
-    };
+    }, []);
 
     if (error) {
         return <div className="alert alert-danger">Erro ao carregar livros.</div>;

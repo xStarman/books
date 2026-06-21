@@ -4,10 +4,10 @@ namespace App\Exceptions;
 
 use Exception;
 
-class BookAlreadyExistsException extends Exception
+class BookAlreadyExistsException extends BooksException
 {
-    public function __construct($message = "book_already_exists", $code = 409, Exception $previous = null)
+    public function __construct($message = "book_already_exists", Exception $previous = null)
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, 409, $previous);
     }
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Title } from "../components/base/title";
-import { AuthorList } from "../components/authors/authors-list";
+import { Title } from "../../components/base/title";
+import { AuthorList } from "../../components/authors/authors-list";
 
 export default function AutoresPage() {
     return (

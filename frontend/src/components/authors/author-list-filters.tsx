@@ -18,17 +18,18 @@ export const AuthorListFilters = ({ onFilterChange }: AuthorListFiltersProps) =>
     });
 
     const formValues = watch();
+    const serializedFormValues = JSON.stringify(formValues);
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            onFilterChange(formValues);
+            onFilterChange(JSON.parse(serializedFormValues));
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [formValues, onFilterChange]);
+    }, [serializedFormValues, onFilterChange]);
 
     return (
-        <form className="row g-3 mb-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="row g-3 mb-4 justify-content-end" onSubmit={(e) => e.preventDefault()}>
             <div className="col-12 col-md-4">
                 <Input
                     {...register("Nome")}

@@ -16,7 +16,7 @@ export const Nav: React.FC<NavProps> = () => {
     const pathname = usePathname()
 
     const links: NavLink[] = [
-        { label: 'Livros', href: '/' },
+        { label: 'Livros', href: '/livros' },
         { label: 'Autores', href: '/autores' },
         { label: 'Assuntos', href: '/assuntos' },
         {
@@ -28,9 +28,9 @@ export const Nav: React.FC<NavProps> = () => {
 
     const getActive = useCallback((link: NavLink) => {
         if (link.href) {
-            return pathname === link.href ? 'link-primary' : 'link-dark'
+            return pathname.startsWith(link.href) ? 'link-primary' : 'link-dark'
         }
-        return link.items?.some(item => pathname === item.href) ? 'link-primary' : 'link-dark'
+        return link.items?.some(item => pathname.startsWith(item.href || '')) ? 'link-primary' : 'link-dark'
     }, [pathname])
 
     return (

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Title } from "../components/base/title";
-import { SubjectList } from "../components/subjects/subjects-list";
+import { Title } from "../../components/base/title";
+import { SubjectList } from "../../components/subjects/subjects-list";
 
 export default function AssuntosPage() {
     return (
