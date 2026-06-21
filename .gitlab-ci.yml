@@ -51,5 +51,7 @@ deploy:
     - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - echo "Deploy"
+    - cp "$FRONTEND_ENV_PROD" frontend/.env.prod
+    - cp "$BACKEND_ENV_PROD" backend/.env.prod
     - docker compose -f docker-compose.prod.yml down || true
     - docker compose -f docker-compose.prod.yml up -d --build
