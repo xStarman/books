@@ -55,7 +55,8 @@ deploy_front:
         - .gitlab-ci.yml
   script:
     - echo "Deploy Frontend"
-    - cp "$FRONTEND_ENV_PROD" frontend/.env.prod
+    - cp "$FRONTEND_ENV_PROD" frontend/.env.prod || true
+    - cp "$BACKEND_ENV_PROD" backend/.env.prod || true
     - docker compose -f docker-compose.prod.yml up -d --build frontend
 
 deploy_back:
@@ -69,5 +70,6 @@ deploy_back:
         - .gitlab-ci.yml
   script:
     - echo "Deploy Backend"
-    - cp "$BACKEND_ENV_PROD" backend/.env.prod
+    - cp "$FRONTEND_ENV_PROD" frontend/.env.prod || true
+    - cp "$BACKEND_ENV_PROD" backend/.env.prod || true
     - docker compose -f docker-compose.prod.yml up -d --build api pgsql
