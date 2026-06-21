@@ -29,6 +29,7 @@ export const Nav: React.FC<NavProps> = () => {
     ]
 
     const getActive = useCallback((link: NavLink) => {
+        if (!pathname) return 'link-dark'
         if (link.href) {
             return pathname.startsWith(link.href) ? 'link-primary' : 'link-dark'
         }
