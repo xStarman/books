@@ -2,7 +2,8 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Assunto;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class SubjectTest extends TestCase
 {
@@ -13,5 +14,15 @@ class SubjectTest extends TestCase
         $this->assertEquals('CodAs', $model->getKeyName());
         $this->assertFalse($model->usesTimestamps());
         $this->assertEquals(['Descricao'], $model->getFillable());
+    }
+
+    public function test_livros_relation()
+    {
+        $model = new Assunto();
+        $relation = $model->livros();
+        $this->assertInstanceOf(BelongsToMany::class, $relation);
+        $this->assertEquals('livro_assunto', $relation->getTable());
+        $this->assertEquals('livro_assunto.Assunto_CodAs', $relation->getQualifiedForeignPivotKeyName());
+        $this->assertEquals('livro_assunto.Livro_CodL', $relation->getQualifiedRelatedPivotKeyName());
     }
 }
