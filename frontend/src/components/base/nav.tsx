@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useCallback } from 'react'
+import { API_URL } from '../../lib/env'
 
 export type NavProps = {
 }
@@ -40,19 +41,28 @@ export const Nav: React.FC<NavProps> = () => {
                 <Link href="/" className='nav-link link-dark'>
                     <span className="fs-4">Books</span>
                 </Link>
-                <ul className="nav d-flex gap-2">
-                    {links.map(link => (
-                        <li className="nav-item" key={link.label}>
-                            {link.href ? (
-                                <Link href={link.href} className={`nav-link px-2 ${getActive(link)}`}>
-                                    {link.label}
-                                </Link>
-                            ) : (
-                                <NavDropdown link={link} activeClass={getActive(link)} />
-                            )}
+                <div className="flex-1 d-flex gap-5 justify-content-between">
+                    <ul className="nav d-flex gap-2">
+                        {links.map(link => (
+                            <li className="nav-item" key={link.label}>
+                                {link.href ? (
+                                    <Link href={link.href} className={`nav-link px-2 ${getActive(link)}`}>
+                                        {link.label}
+                                    </Link>
+                                ) : (
+                                    <NavDropdown link={link} activeClass={getActive(link)} />
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                    <ul className="nav d-flex">
+                        <li className="nav-item" >
+                            <Link target='_blank' href={`${API_URL}/api/documentation`} className={`nav-link px-2`}>
+                                Documentação Swagger
+                            </Link>
                         </li>
-                    ))}
-                </ul>
+                    </ul>
+                </div>
             </div>
         </nav>
     )
