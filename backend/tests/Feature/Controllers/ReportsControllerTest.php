@@ -26,4 +26,12 @@ class ReportsControllerTest extends TestCase
             $response->headers->get('Content-Type')
         );
     }
+
+    public function test_returns_validation_error_for_invalid_audit_acao()
+    {
+        $response = $this->getJson('/api/reports/audits?acao=INVALIDO');
+        
+        $response->assertStatus(422)
+                 ->assertJsonValidationErrors(['acao']);
+    }
 }
