@@ -18,7 +18,7 @@ build_front:
 
 test_back:
   stage: test
-  image: lorisleiva/laravel-docker:8.3
+  image: lorisleiva/laravel-docker:8.4
   services:
     - postgres:16-alpine
   variables:
