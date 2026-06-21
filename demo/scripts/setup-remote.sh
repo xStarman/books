@@ -2,7 +2,7 @@
 
 # A senha do root definida no docker-compose.yml
 ROOT_PASSWORD="Sup3rS3cr3t#2026!"
-# URL-encoded password to prevent git from treating '#' as a fragment
+
 GITLAB_URL="http://root:Sup3rS3cr3t%232026%21@localhost:8090/root/teste.git"
 
 echo "Configurando remotes de push duplo..."

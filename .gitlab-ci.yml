@@ -1,0 +1,61 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build_front:
+  stage: build
+  image: node:20-alpine
+  tags:
+    - docker
+  rules:
+    - changes:
+        - frontend/**/*
+        - .gitlab-ci.yml
+  script:
+    - echo "Build frontend"
+    - cd frontend
+    - npm install
+    - npm run build
+
+test_back:
+  stage: test
+  image: lorisleiva/laravel-docker:8.2
+  services:
+    - postgres:16-alpine
+  variables:
+    POSTGRES_DB: books
+    POSTGRES_USER: sail
+    POSTGRES_PASSWORD: password
+    DB_CONNECTION: pgsql
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_DATABASE: books
+    DB_USERNAME: sail
+    DB_PASSWORD: password
+  tags:
+    - docker
+  rules:
+    - changes:
+        - backend/**/*
+        - .gitlab-ci.yml
+  script:
+    - echo "Testes backend"
+    - cd backend
+    - cp .env.example .env || true
+    - composer install
+    - php artisan key:generate
+    - php artisan migrate --force
+    - php artisan test
+
+deploy:
+  stage: deploy
+  image: docker:cli
+  tags:
+    - docker
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - echo "Deploy"
+    - docker compose -f docker-compose.prod.yml down || true
+    - docker compose -f docker-compose.prod.yml up -d --build

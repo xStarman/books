@@ -11,3 +11,10 @@ backend/.env
 backend/.env.*
 frontend/.env
 frontend/.env.*
+
+# Ignorar ambiente local de demo para o Docker Build
+demo/
+docker-compose.yml
+docker-compose.prod.yml
+.gitlab-ci.yml
+README.md
