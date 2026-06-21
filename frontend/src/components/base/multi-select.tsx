@@ -62,7 +62,7 @@ export const MultiSelect = ({ label, options, value, onChange, placeholder, erro
 
             {error && <div className="invalid-feedback d-block mt-0 mb-2">{error}</div>}
 
-            <div className="bg-light-subtle border rounded p-2" style={{ minHeight: '46px', borderStyle: 'dashed!important' }}>
+            <div className="bg-light-subtle rounded p-2" style={{ minHeight: '46px', border: '1px dashed var(--bs-border-color)' }}>
                 {selectedOptions.length === 0 && (
                     <div className="text-muted small text-center mt-1">Nenhum item selecionado</div>
                 )}

@@ -1,7 +1,8 @@
 FROM php:8.4-fpm-alpine
 
-RUN apk add --no-cache bash postgresql-dev \
-    && docker-php-ext-install pdo pdo_pgsql
+RUN apk add --no-cache bash postgresql-dev libzip-dev libpng-dev freetype-dev libjpeg-turbo-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_pgsql zip gd
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

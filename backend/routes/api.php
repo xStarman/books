@@ -19,6 +19,10 @@ use App\Http\Controllers\StoreSubjectController;
 use App\Http\Controllers\UpdateSubjectController;
 use App\Http\Controllers\GetSubjectByIdController;
 use App\Http\Controllers\DeleteSubjectController;
+use App\Http\Controllers\ReportBookController;
+
+Route::get('/reports/books', ReportBookController::class);
+
 Route::get('/books', ListBooksController::class);
 Route::post('/books', StoreBookController::class);
 Route::get('/books/{id}', GetBookByIdController::class)->where('id', '[0-9]+');
