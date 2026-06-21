@@ -10,6 +10,8 @@ bash "$DIR/wait-gitlab.sh"
 
 bash "$DIR/setup-remote.sh"
 
+bash "$DIR/upload-env.sh"
+
 bash "$DIR/register-runner.sh"
 
 echo "=== Pronto ==="

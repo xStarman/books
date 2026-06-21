@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Verificar se os arquivos locais existem
+# Criar .env.prod se não existirem
 if [ ! -f "frontend/.env.prod" ]; then
-    echo "Erro: frontend/.env.prod não encontrado!"
-    exit 1
+    echo "⚠️  Aviso: frontend/.env.prod não encontrado. Criando a partir do .env.example..."
+    cp frontend/.env.example frontend/.env.prod || touch frontend/.env.prod
 fi
 
 if [ ! -f "backend/.env.prod" ]; then
-    echo "Erro: backend/.env.prod não encontrado!"
-    exit 1
+    echo "⚠️  Aviso: backend/.env.prod não encontrado. Criando a partir do .env.example..."
+    cp backend/.env.example backend/.env.prod || touch backend/.env.prod
 fi
 
 echo "Gerando Personal Access Token temporário via gitlab-rails (isso pode levar 2 minutinhos)..."
@@ -23,9 +23,21 @@ if [ -z "$PAT" ]; then
     exit 1
 fi
 
-echo "Criando variáveis no projeto root/teste..."
+echo "Verificando se o projeto 'teste' já existe..."
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --header "PRIVATE-TOKEN: $PAT" "http://localhost:8090/api/v4/projects/root%2Fteste")
 
-# Função para fazer o upload da variável como arquivo
+if [ "$HTTP_STATUS" == "404" ]; then
+    echo "Criando o projeto 'teste'..."
+    curl -s -o /dev/null --request POST --header "PRIVATE-TOKEN: $PAT" \
+         --data "name=teste&visibility=private" \
+         "http://localhost:8090/api/v4/projects"
+    echo "Projeto criado!"
+else
+    echo "Projeto já existe."
+fi
+
+echo "Injetando variáveis de ambiente no projeto..."
+
 upload_var() {
     local key=$1
     local file=$2
@@ -48,4 +60,4 @@ upload_var() {
 upload_var "FRONTEND_ENV_PROD" "frontend/.env.prod"
 upload_var "BACKEND_ENV_PROD" "backend/.env.prod"
 
-echo "Pronto! Variáveis injetadas no GitLab com sucesso!"
+echo "Pronto! Variáveis configuradas com sucesso no GitLab!"
