@@ -20,8 +20,10 @@ use App\Http\Controllers\UpdateSubjectController;
 use App\Http\Controllers\GetSubjectByIdController;
 use App\Http\Controllers\DeleteSubjectController;
 use App\Http\Controllers\ReportBookController;
+use App\Http\Controllers\ReportAuditController;
 
 Route::get('/reports/books', ReportBookController::class);
+Route::get('/reports/audits', ReportAuditController::class);
 
 Route::get('/books', ListBooksController::class);
 Route::post('/books', StoreBookController::class);

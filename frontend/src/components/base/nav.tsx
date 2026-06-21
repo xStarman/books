@@ -22,6 +22,7 @@ export const Nav: React.FC<NavProps> = () => {
         {
             label: 'Relatórios', items: [
                 { label: 'Relatório de livros', href: '/relatorios/livros' },
+                { label: 'Relatório de auditoria', href: '/relatorios/auditoria' },
             ]
         },
     ]
