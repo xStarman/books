@@ -14,6 +14,7 @@ export const SubjectList = () => {
     const [requestParams, setRequestParams] = useState<ListSubjectsRequest>({
         page: 1,
         page_size: 10,
+        order: { CodAs: "desc" },
     });
     const [subjectToDelete, setSubjectToDelete] = useState<Subject | null>(null);
     const queryClient = useQueryClient();

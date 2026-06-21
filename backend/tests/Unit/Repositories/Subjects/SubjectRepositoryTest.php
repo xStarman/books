@@ -42,13 +42,13 @@ class SubjectRepositoryTest extends TestCase
         $this->assertStringContainsString('order by "Descricao" desc', $query->toSql());
     }
 
-    public function test_default_order_is_descricao_asc()
+    public function test_default_order_is_cod_as_desc()
     {
         $repository = new SubjectRepository();
         $filters = SubjectFiltersDTO::fromArray([]);
 
         $query = $repository->getFilteredQuery($filters);
 
-        $this->assertStringContainsString('order by "Descricao" asc', $query->toSql());
+        $this->assertStringContainsString('order by "CodAs" desc', $query->toSql());
     }
 }

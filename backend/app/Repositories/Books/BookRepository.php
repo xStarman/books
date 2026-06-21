@@ -35,7 +35,7 @@ class BookRepository
                 $query->orderBy($order->field, $order->direction);
             }
         } else {
-            $query->orderBy('Titulo', 'asc');
+            $query->orderBy('CodL', 'desc');
         }
 
         return $query;

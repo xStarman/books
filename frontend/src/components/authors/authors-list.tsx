@@ -14,6 +14,7 @@ export const AuthorList = () => {
     const [requestParams, setRequestParams] = useState<ListAuthorsRequest>({
         page: 1,
         page_size: 10,
+        order: { CodAu: "desc" },
     });
     const [authorToDelete, setAuthorToDelete] = useState<Author | null>(null);
     const queryClient = useQueryClient();

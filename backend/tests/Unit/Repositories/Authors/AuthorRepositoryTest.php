@@ -38,13 +38,13 @@ class AuthorRepositoryTest extends TestCase
         $this->assertStringContainsString('order by "Nome" desc', $query->toSql());
     }
 
-    public function test_default_order_is_nome_asc()
+    public function test_default_order_is_cod_au_desc()
     {
         $repository = new AuthorRepository();
         $filters = AuthorFiltersDTO::fromArray([]);
         
         $query = $repository->getFilteredQuery($filters);
         
-        $this->assertStringContainsString('order by "Nome" asc', $query->toSql());
+        $this->assertStringContainsString('order by "CodAu" desc', $query->toSql());
     }
 }

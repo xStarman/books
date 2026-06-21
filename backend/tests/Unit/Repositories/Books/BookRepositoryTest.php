@@ -57,13 +57,13 @@ class BookRepositoryTest extends TestCase
         $this->assertStringContainsString('order by "Titulo" desc', $query->toSql());
     }
 
-    public function test_default_order_is_titulo_asc()
+    public function test_default_order_is_cod_l_desc()
     {
         $repository = new BookRepository();
         $filters = BookFiltersDTO::fromArray([]);
         
         $query = $repository->getFilteredQuery($filters);
         
-        $this->assertStringContainsString('order by "Titulo" asc', $query->toSql());
+        $this->assertStringContainsString('order by "CodL" desc', $query->toSql());
     }
 }

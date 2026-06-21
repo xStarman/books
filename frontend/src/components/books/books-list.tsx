@@ -56,8 +56,8 @@ const AuthorCell = ({ autores }: { autores?: Author[] }) => {
 export const BookList: React.FC = () => {
     const queryClient = useQueryClient();
     const [page, setPage] = useState(1);
-    const [sortCol, setSortCol] = useState<string>("Titulo");
-    const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+    const [sortCol, setSortCol] = useState<string>("CodL");
+    const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
     const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
     const [filters, setFilters] = useState<BookFiltersData>({});

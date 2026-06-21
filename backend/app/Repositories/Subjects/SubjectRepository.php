@@ -24,7 +24,7 @@ class SubjectRepository
                 $query->orderBy($order->field, $order->direction);
             }
         } else {
-            $query->orderBy('Descricao', 'asc');
+            $query->orderBy('CodAs', 'desc');
         }
 
         return $query;

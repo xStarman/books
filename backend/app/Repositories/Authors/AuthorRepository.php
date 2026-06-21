@@ -24,7 +24,7 @@ class AuthorRepository
                 $query->orderBy($order->field, $order->direction);
             }
         } else {
-            $query->orderBy('Nome', 'asc');
+            $query->orderBy('CodAu', 'desc');
         }
 
         return $query;
