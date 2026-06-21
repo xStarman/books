@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "../base/input";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { saveSubject } from "../../lib/save-subject";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
@@ -20,6 +20,7 @@ type SubjectFormProps = {
 
 export const SubjectForm = ({ initialData }: SubjectFormProps) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<SubjectFormData>({
         resolver: zodResolver(schema as any),
@@ -31,6 +32,7 @@ export const SubjectForm = ({ initialData }: SubjectFormProps) => {
     const mutation = useMutation({
         mutationFn: (data: SubjectFormData) => saveSubject(data, initialData?.CodAs),
         onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['subjects'] });
             toast.success(`Assunto ${initialData ? 'atualizado' : 'cadastrado'} com sucesso!`);
             if (!initialData) {
                 router.push('/assuntos');

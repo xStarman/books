@@ -3,10 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "../base/input";
 import { MoneyInput } from "../base/money-input";
-import { MultiSelect } from "../base/multi-select";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { getAllAuthors } from "../../lib/get-all-authors";
-import { getAllSubjects } from "../../lib/get-all-subjects";
+import { AuthorSelect } from "../authors/author-select";
+import { SubjectSelect } from "../subjects/subject-select";
+import { useMutation } from "@tanstack/react-query";
 import { saveBook } from "../../lib/save-book";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
@@ -55,21 +54,6 @@ export const BookForm = ({ initialData }: BookFormProps) => {
             assuntos: initialData?.assuntos?.map(a => a.CodAs) || [],
         }
     });
-
-    const { data: authors } = useQuery({
-        queryKey: ['authors-all'],
-        queryFn: getAllAuthors,
-        staleTime: 1000 * 60 * 5,
-    });
-
-    const { data: subjects } = useQuery({
-        queryKey: ['subjects-all'],
-        queryFn: getAllSubjects,
-        staleTime: 1000 * 60 * 5,
-    });
-
-    const authorOptions = (authors || []).map(a => ({ label: a.Nome, value: a.CodAu }));
-    const subjectOptions = (subjects || []).map(s => ({ label: s.Descricao, value: s.CodAs }));
 
     const mutation = useMutation({
         mutationFn: (data: BookFormData) => saveBook(data as any, initialData?.CodL),
@@ -173,11 +157,11 @@ export const BookForm = ({ initialData }: BookFormProps) => {
                         control={control}
                         name="autores"
                         render={({ field }) => (
-                            <MultiSelect
+                            <AuthorSelect
+                                isMulti
                                 label="Autores"
                                 placeholder="Selecione um autor"
                                 helpText="Clique no + para adicionar múltiplos autores"
-                                options={authorOptions}
                                 value={field.value}
                                 onChange={field.onChange}
                                 error={errors.autores?.message}
@@ -190,11 +174,11 @@ export const BookForm = ({ initialData }: BookFormProps) => {
                             control={control}
                             name="assuntos"
                             render={({ field }) => (
-                                <MultiSelect
+                                <SubjectSelect
+                                    isMulti
                                     label="Categorias"
                                     placeholder="Selecione uma categoria"
                                     helpText="Clique no + para adicionar múltiplas categorias"
-                                    options={subjectOptions}
                                     value={field.value}
                                     onChange={field.onChange}
                                     error={errors.assuntos?.message}

@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "../base/input";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { saveAuthor } from "../../lib/save-author";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
@@ -20,6 +20,7 @@ type AuthorFormProps = {
 
 export const AuthorForm = ({ initialData }: AuthorFormProps) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<AuthorFormData>({
         resolver: zodResolver(schema as any),
@@ -31,6 +32,7 @@ export const AuthorForm = ({ initialData }: AuthorFormProps) => {
     const mutation = useMutation({
         mutationFn: (data: AuthorFormData) => saveAuthor(data, initialData?.CodAu),
         onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['authors'] });
             toast.success(`Autor ${initialData ? 'atualizado' : 'cadastrado'} com sucesso!`);
             if (!initialData) {
                 router.push('/autores');

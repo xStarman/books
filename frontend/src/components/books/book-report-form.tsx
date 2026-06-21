@@ -2,10 +2,9 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "../base/input";
-import { MultiSelect } from "../base/multi-select";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { getAllAuthors } from "../../lib/get-all-authors";
-import { getAllSubjects } from "../../lib/get-all-subjects";
+import { AuthorSelect } from "../authors/author-select";
+import { SubjectSelect } from "../subjects/subject-select";
+import { useMutation } from "@tanstack/react-query";
 import { downloadBookReport } from "../../lib/download-book-report";
 import { toast } from "react-toastify";
 
@@ -61,21 +60,6 @@ export const BookReportForm = () => {
             assuntos: [],
         }
     });
-
-    const { data: authors } = useQuery({
-        queryKey: ['authors-all'],
-        queryFn: getAllAuthors,
-        staleTime: 1000 * 60 * 5,
-    });
-
-    const { data: subjects } = useQuery({
-        queryKey: ['subjects-all'],
-        queryFn: getAllSubjects,
-        staleTime: 1000 * 60 * 5,
-    });
-
-    const authorOptions = (authors || []).map(a => ({ label: a.Nome, value: a.CodAu }));
-    const subjectOptions = (subjects || []).map(s => ({ label: s.Descricao, value: s.CodAs }));
 
     const mutation = useMutation({
         mutationFn: (data: BookReportFormData) => {
@@ -149,11 +133,11 @@ export const BookReportForm = () => {
                         control={control}
                         name="autores"
                         render={({ field }) => (
-                            <MultiSelect
+                            <AuthorSelect
+                                isMulti
                                 label="Autores"
                                 placeholder="Selecione os autores"
                                 helpText="Retorna livros que possuam pelo menos um dos autores"
-                                options={authorOptions}
                                 value={field.value || []}
                                 onChange={field.onChange}
                                 error={errors.autores?.message}
@@ -166,11 +150,11 @@ export const BookReportForm = () => {
                             control={control}
                             name="assuntos"
                             render={({ field }) => (
-                                <MultiSelect
+                                <SubjectSelect
+                                    isMulti
                                     label="Categorias"
                                     placeholder="Selecione as categorias"
                                     helpText="Retorna livros que possuam pelo menos uma das categorias"
-                                    options={subjectOptions}
                                     value={field.value || []}
                                     onChange={field.onChange}
                                     error={errors.assuntos?.message}
