@@ -6,8 +6,6 @@ stages:
 build_front:
   stage: build
   image: node:20-alpine
-  tags:
-    - docker
   rules:
     - changes:
         - frontend/**/*
@@ -33,8 +31,6 @@ test_back:
     DB_DATABASE: books
     DB_USERNAME: sail
     DB_PASSWORD: password
-  tags:
-    - docker
   rules:
     - changes:
         - backend/**/*
@@ -51,8 +47,6 @@ test_back:
 deploy:
   stage: deploy
   image: docker:cli
-  tags:
-    - docker
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   script:
