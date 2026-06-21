@@ -79,4 +79,6 @@ Isso levantará os containers do GitLab, registrará um Runner local, configurar
 
 👉 **[Clique aqui para ver as instruções detalhadas do Ambiente de CI/CD (GitLab Local)](./demo/README.md)**
 
+> 
+
 

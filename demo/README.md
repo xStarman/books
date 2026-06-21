@@ -21,6 +21,22 @@ Certifique-se de que o Docker está rodando e execute o script na raiz do reposi
 
 Aguarde até receber a mensagem de que os remotes foram configurados e o Runner registrado com sucesso.
 
+## Variáveis de Produção e CI/CD
+
+Para que o deploy funcione corretamente via CI/CD, é obrigatório possuir os arquivos de configuração de produção localmente (mesmo que eles não sejam commitados devido ao `.gitignore`).
+
+Certifique-se de que você criou os seguintes arquivos com as variáveis corretas para o ambiente de produção:
+- `frontend/.env.prod`
+- `backend/.env.prod`
+
+**Importante:** Assim que os repositórios forem enviados para o GitLab pela primeira vez, você precisará injetar esses arquivos no CI/CD para que o Runner consiga realizar o deploy. Para fazer isso automaticamente, execute:
+
+```bash
+./demo/scripts/upload-env.sh
+```
+
+Esse script gerará um token temporário, lerá seus arquivos `.env.prod` locais e fará o upload deles nativamente para as Variáveis de CI/CD do projeto (`FRONTEND_ENV_PROD` e `BACKEND_ENV_PROD` do tipo File).
+
 ## Como testar o CI/CD na prática
 
 > [!IMPORTANT]
