@@ -3,6 +3,7 @@
 ### Débitos técnicos:
 
 - Implementar os testes de frontend.
+- Lint para padronização de código.
 
 ### Melhorias:
 - Padronização de mensagens de erro.

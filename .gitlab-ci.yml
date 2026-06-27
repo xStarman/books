@@ -44,6 +44,19 @@ test_back:
     - php artisan migrate --force
     - php artisan test
 
+test_front:
+  stage: test
+  image: node:20-alpine
+  rules:
+    - changes:
+        - frontend/**/*
+        - .gitlab-ci.yml
+  script:
+    - echo "Testes frontend"
+    - cd frontend
+    - npm install
+    - npm run test
+
 deploy_front:
   stage: deploy
   image: docker:cli
