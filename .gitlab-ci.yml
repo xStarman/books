@@ -9,7 +9,7 @@ build_front:
   rules:
     - changes:
         - frontend/**/*
-        - .gitlab-ci.yml
+        - "*"
   script:
     - echo "Build frontend"
     - cd frontend
@@ -34,7 +34,7 @@ test_back:
   rules:
     - changes:
         - backend/**/*
-        - .gitlab-ci.yml
+        - "*"
   script:
     - echo "Testes backend"
     - cd backend
@@ -50,7 +50,7 @@ test_front:
   rules:
     - changes:
         - frontend/**/*
-        - .gitlab-ci.yml
+        - "*"
   script:
     - echo "Testes frontend"
     - cd frontend
@@ -64,8 +64,7 @@ deploy_front:
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
         - frontend/**/*
-        - docker-compose.prod.yml
-        - .gitlab-ci.yml
+        - "*"
   script:
     - echo "Deploy Frontend"
     - cp "$FRONTEND_ENV_PROD" frontend/.env.prod || true
@@ -79,8 +78,7 @@ deploy_back:
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
         - backend/**/*
-        - docker-compose.prod.yml
-        - .gitlab-ci.yml
+        - "*"
   script:
     - echo "Deploy Backend"
     - cp "$FRONTEND_ENV_PROD" frontend/.env.prod || true
