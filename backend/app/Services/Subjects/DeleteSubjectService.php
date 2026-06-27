@@ -15,7 +15,7 @@ class DeleteSubjectService
         try {
             $assunto->delete();
         } catch (QueryException $e) {
-            if ($e->getCode() === '23503') {
+            if (in_array($e->getCode(), ['23503', '23001'])) {
                 throw new SubjectHasBooksException();
             }
             throw $e;

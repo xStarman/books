@@ -7,6 +7,7 @@ use App\Services\Subjects\GetAllSubjectsService;
 use App\Repositories\Subjects\SubjectRepository;
 use App\DTOs\Subjects\SubjectFiltersDTO;
 use App\DTOs\OrderDTO;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 
@@ -16,7 +17,7 @@ class GetAllSubjectsServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(SubjectRepository::class);
         
-        $queryMock = Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $queryMock = Mockery::mock(Builder::class);
         $queryMock->shouldReceive('get')
                   ->andReturn(new Collection([]));
 

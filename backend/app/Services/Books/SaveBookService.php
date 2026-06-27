@@ -4,6 +4,10 @@ namespace App\Services\Books;
 
 use App\Exceptions\BookAlreadyExistsException;
 use App\Models\Livro;
+use App\Models\Autor;
+use App\Models\Assunto;
+use App\Exceptions\AuthorAlreadyExistsException;
+use App\Exceptions\SubjectAlreadyExistsException;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Authors\AuthorRepository;
 use App\Repositories\Subjects\SubjectRepository;
@@ -49,8 +53,8 @@ class SaveBookService
                         try {
                             $autor = $this->authorRepository->save(['Nome' => mb_substr($nome, 0, 40)]);
                             $autorIds[] = $autor->CodAu;
-                        } catch (\App\Exceptions\AuthorAlreadyExistsException $e) {
-                            $autor = \App\Models\Autor::where('Nome', mb_substr($nome, 0, 40))->first();
+                        } catch (AuthorAlreadyExistsException $e) {
+                            $autor = Autor::where('Nome', mb_substr($nome, 0, 40))->first();
                             if ($autor) $autorIds[] = $autor->CodAu;
                         }
                         continue;
@@ -68,8 +72,8 @@ class SaveBookService
                         try {
                             $assunto = $this->subjectRepository->save(['Descricao' => mb_substr($descricao, 0, 20)]);
                             $assuntoIds[] = $assunto->CodAs;
-                        } catch (\App\Exceptions\SubjectAlreadyExistsException $e) {
-                            $assunto = \App\Models\Assunto::where('Descricao', mb_substr($descricao, 0, 20))->first();
+                        } catch (SubjectAlreadyExistsException $e) {
+                            $assunto = Assunto::where('Descricao', mb_substr($descricao, 0, 20))->first();
                             if ($assunto) $assuntoIds[] = $assunto->CodAs;
                         }
                         continue;

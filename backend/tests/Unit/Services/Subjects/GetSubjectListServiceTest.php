@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Subjects;
 
 use Tests\TestCase;
 use App\Services\Subjects\GetSubjectListService;
+use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Subjects\SubjectRepository;
 use App\DTOs\Subjects\SubjectFiltersDTO;
 use App\DTOs\OrderDTO;
@@ -16,7 +17,7 @@ class GetSubjectListServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(SubjectRepository::class);
         
-        $queryMock = Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $queryMock = Mockery::mock(Builder::class);
         $queryMock->shouldReceive('paginate')
                   ->with(10)
                   ->andReturn(new LengthAwarePaginator([], 0, 10));

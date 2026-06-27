@@ -3,6 +3,8 @@ namespace Tests\Unit\Repositories\Authors;
 
 use Tests\TestCase;
 use App\Repositories\Authors\AuthorRepository;
+use Illuminate\Support\Str;
+use App\Exceptions\AuthorAlreadyExistsException;
 use App\Models\Autor;
 use App\DTOs\Authors\AuthorFiltersDTO;
 use App\DTOs\OrderDTO;
@@ -14,8 +16,8 @@ class AuthorRepositoryTest extends TestCase
 
     public function test_can_filter_by_nome()
     {
-        $author1 = Autor::create(['Nome' => 'Autor Teste A ' . \Illuminate\Support\Str::random(4)]);
-        $author2 = Autor::create(['Nome' => 'Outro Autor ' . \Illuminate\Support\Str::random(4)]);
+        $author1 = Autor::create(['Nome' => 'Autor Teste A ' . Str::random(4)]);
+        $author2 = Autor::create(['Nome' => 'Outro Autor ' . Str::random(4)]);
 
         $repository = new AuthorRepository();
         $filters = AuthorFiltersDTO::fromArray(['Nome' => 'Teste A']);
@@ -51,7 +53,7 @@ class AuthorRepositoryTest extends TestCase
     public function test_save_creates_new_author()
     {
         $repository = new AuthorRepository();
-        $nome = 'Autor Repo ' . \Illuminate\Support\Str::random(8);
+        $nome = 'Autor Repo ' . Str::random(8);
 
         $autor = $repository->save(['Nome' => $nome]);
 
@@ -62,8 +64,8 @@ class AuthorRepositoryTest extends TestCase
     public function test_save_updates_existing_author()
     {
         $repository = new AuthorRepository();
-        $autor = Autor::create(['Nome' => 'Velho ' . \Illuminate\Support\Str::random(8)]);
-        $novoNome = 'Atualizado ' . \Illuminate\Support\Str::random(8);
+        $autor = Autor::create(['Nome' => 'Velho ' . Str::random(8)]);
+        $novoNome = 'Atualizado ' . Str::random(8);
 
         $atualizado = $repository->save(['Nome' => $novoNome], $autor->CodAu);
 
@@ -74,10 +76,10 @@ class AuthorRepositoryTest extends TestCase
     public function test_save_throws_exception_on_duplicate_name()
     {
         $repository = new AuthorRepository();
-        $nome = 'Duplicado ' . \Illuminate\Support\Str::random(8);
+        $nome = 'Duplicado ' . Str::random(8);
         Autor::create(['Nome' => $nome]);
 
-        $this->expectException(\App\Exceptions\AuthorAlreadyExistsException::class);
+        $this->expectException(AuthorAlreadyExistsException::class);
         $repository->save(['Nome' => $nome]);
     }
 }

@@ -3,14 +3,18 @@ namespace Tests\Unit\Exports\Reports;
 
 use Tests\TestCase;
 use App\Exports\Reports\BooksExport;
+use App\DTOs\Reports\BookReportFilterDTO;
+use App\Repositories\Reports\BookReportRepository;
+use Illuminate\Database\Eloquent\Builder;
+use Mockery;
 
 class BooksExportTest extends TestCase
 {
     public function test_export_headings_and_mapping()
     {
-        $filters = \App\DTOs\Reports\BookReportFilterDTO::fromArray([]);
-        $repoMock = \Mockery::mock(\App\Repositories\Reports\BookReportRepository::class);
-        $queryMock = \Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $filters = BookReportFilterDTO::fromArray([]);
+        $repoMock = Mockery::mock(BookReportRepository::class);
+        $queryMock = Mockery::mock(Builder::class);
         
         $queryMock->shouldReceive('get')->andReturn(collect([
             (object) [

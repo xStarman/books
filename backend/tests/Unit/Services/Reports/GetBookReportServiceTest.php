@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Services\Reports\GetBookReportService;
 use App\DTOs\Reports\BookReportFilterDTO;
 use App\Repositories\Reports\BookReportRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Facades\Excel;
 use Mockery;
 
@@ -15,7 +16,7 @@ class GetBookReportServiceTest extends TestCase
     {
         Excel::fake();
         
-        $queryMock = Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $queryMock = Mockery::mock(Builder::class);
         $queryMock->shouldReceive('get')->andReturn(collect([]));
 
         $repositoryMock = Mockery::mock(BookReportRepository::class);

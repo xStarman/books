@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Authors;
 
 use Tests\TestCase;
 use App\Services\Authors\GetAllAuthorsService;
+use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Authors\AuthorRepository;
 use App\DTOs\Authors\AuthorFiltersDTO;
 use App\DTOs\OrderDTO;
@@ -16,7 +17,7 @@ class GetAllAuthorsServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(AuthorRepository::class);
         
-        $queryMock = Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $queryMock = Mockery::mock(Builder::class);
         $queryMock->shouldReceive('get')
                   ->andReturn(new Collection([]));
 

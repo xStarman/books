@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Books;
 
 use Tests\TestCase;
 use App\Services\Books\GetBookByIdService;
+use Illuminate\Support\Str;
 use App\Models\Livro;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -15,7 +16,7 @@ class GetBookByIdServiceTest extends TestCase
     public function test_can_get_book_by_id()
     {
         $book = Livro::create([
-            'Titulo' => 'Livro Teste ' . \Illuminate\Support\Str::random(4),
+            'Titulo' => 'Livro Teste ' . Str::random(4),
             'Editora' => 'Ed',
             'Edicao' => 1,
             'AnoPublicacao' => 2024,

@@ -4,6 +4,8 @@ namespace Tests\Unit\Repositories\Subjects;
 
 use Tests\TestCase;
 use App\Repositories\Subjects\SubjectRepository;
+use Illuminate\Support\Str;
+use App\Exceptions\SubjectAlreadyExistsException;
 use App\Models\Assunto;
 use App\DTOs\Subjects\SubjectFiltersDTO;
 use App\DTOs\OrderDTO;
@@ -15,8 +17,8 @@ class SubjectRepositoryTest extends TestCase
 
     public function test_can_filter_by_descricao()
     {
-        $subject1 = Assunto::create(['Descricao' => 'Assunto Teste A ' . \Illuminate\Support\Str::random(4)]);
-        $subject2 = Assunto::create(['Descricao' => 'Outro Assunto ' . \Illuminate\Support\Str::random(4)]);
+        $subject1 = Assunto::create(['Descricao' => 'Assunto Teste A ' . Str::random(4)]);
+        $subject2 = Assunto::create(['Descricao' => 'Outro Assunto ' . Str::random(4)]);
 
         $repository = new SubjectRepository();
         $filters = SubjectFiltersDTO::fromArray(['Descricao' => 'Teste A']);
@@ -30,8 +32,8 @@ class SubjectRepositoryTest extends TestCase
 
     public function test_can_order_results()
     {
-        $subject1 = Assunto::create(['Descricao' => 'Z Assunto ' . \Illuminate\Support\Str::random(4)]);
-        $subject2 = Assunto::create(['Descricao' => 'A Assunto ' . \Illuminate\Support\Str::random(4)]);
+        $subject1 = Assunto::create(['Descricao' => 'Z Assunto ' . Str::random(4)]);
+        $subject2 = Assunto::create(['Descricao' => 'A Assunto ' . Str::random(4)]);
 
         $repository = new SubjectRepository();
         $filters = SubjectFiltersDTO::fromArray([]);
@@ -55,7 +57,7 @@ class SubjectRepositoryTest extends TestCase
     public function test_save_creates_new_subject()
     {
         $repository = new SubjectRepository();
-        $descricao = 'Subj ' . \Illuminate\Support\Str::random(4);
+        $descricao = 'Subj ' . Str::random(4);
 
         $assunto = $repository->save(['Descricao' => $descricao]);
 
@@ -66,8 +68,8 @@ class SubjectRepositoryTest extends TestCase
     public function test_save_updates_existing_subject()
     {
         $repository = new SubjectRepository();
-        $assunto = Assunto::create(['Descricao' => 'Old ' . \Illuminate\Support\Str::random(4)]);
-        $novaDesc = 'New ' . \Illuminate\Support\Str::random(4);
+        $assunto = Assunto::create(['Descricao' => 'Old ' . Str::random(4)]);
+        $novaDesc = 'New ' . Str::random(4);
 
         $atualizado = $repository->save(['Descricao' => $novaDesc], $assunto->CodAs);
 
@@ -78,10 +80,10 @@ class SubjectRepositoryTest extends TestCase
     public function test_save_throws_exception_on_duplicate_description()
     {
         $repository = new SubjectRepository();
-        $descricao = 'Dup ' . \Illuminate\Support\Str::random(4);
+        $descricao = 'Dup ' . Str::random(4);
         Assunto::create(['Descricao' => $descricao]);
 
-        $this->expectException(\App\Exceptions\SubjectAlreadyExistsException::class);
+        $this->expectException(SubjectAlreadyExistsException::class);
         $repository->save(['Descricao' => $descricao]);
     }
 }

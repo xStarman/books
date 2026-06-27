@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Services\Reports\GetAuditReportService;
 use App\DTOs\Reports\AuditReportFilterDTO;
 use App\Repositories\Reports\AuditReportRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Facades\Excel;
 use Mockery;
 
@@ -15,7 +16,7 @@ class GetAuditReportServiceTest extends TestCase
     {
         Excel::fake();
         
-        $queryMock = Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $queryMock = Mockery::mock(Builder::class);
         $queryMock->shouldReceive('get')->andReturn(collect([]));
 
         $repositoryMock = Mockery::mock(AuditReportRepository::class);

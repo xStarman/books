@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Books;
 
 use Tests\TestCase;
 use App\Services\Books\GetBookListService;
+use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Books\BookRepository;
 use App\DTOs\Books\BookFiltersDTO;
 use App\DTOs\OrderDTO;
@@ -16,7 +17,7 @@ class GetBookListServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(BookRepository::class);
         
-        $queryMock = Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $queryMock = Mockery::mock(Builder::class);
         $queryMock->shouldReceive('paginate')
                   ->with(10)
                   ->andReturn(new LengthAwarePaginator([], 0, 10));

@@ -3,6 +3,7 @@ namespace Tests\Unit\Repositories\Books;
 
 use Tests\TestCase;
 use App\Repositories\Books\BookRepository;
+use Illuminate\Support\Str;
 use App\Models\Livro;
 use App\DTOs\Books\BookFiltersDTO;
 use App\DTOs\OrderDTO;
@@ -15,14 +16,14 @@ class BookRepositoryTest extends TestCase
     public function test_can_filter_by_titulo_and_edicao()
     {
         $book1 = Livro::create([
-            'Titulo' => 'Livro Teste A ' . \Illuminate\Support\Str::random(4),
+            'Titulo' => 'Livro Teste A ' . Str::random(4),
             'Editora' => 'Ed',
             'Edicao' => 1,
             'AnoPublicacao' => 2024,
             'Preco' => 10.50,
         ]);
         $book2 = Livro::create([
-            'Titulo' => 'Outro Livro ' . \Illuminate\Support\Str::random(4),
+            'Titulo' => 'Outro Livro ' . Str::random(4),
             'Editora' => 'Ed',
             'Edicao' => 2,
             'AnoPublicacao' => 2024,

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Books;
 
+use App\Models\Autor;
+use App\Models\Assunto;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SaveBookRequest extends FormRequest
@@ -23,7 +25,7 @@ class SaveBookRequest extends FormRequest
             'autores.*' => [
                 function ($attribute, $value, $fail) {
                     if (is_numeric($value)) {
-                        if (!\App\Models\Autor::where('CodAu', $value)->exists()) {
+                        if (!Autor::where('CodAu', $value)->exists()) {
                             $fail('O autor selecionado é inválido.');
                         }
                         return;
@@ -40,7 +42,7 @@ class SaveBookRequest extends FormRequest
             'assuntos.*' => [
                 function ($attribute, $value, $fail) {
                     if (is_numeric($value)) {
-                        if (!\App\Models\Assunto::where('CodAs', $value)->exists()) {
+                        if (!Assunto::where('CodAs', $value)->exists()) {
                             $fail('A categoria selecionada é inválida.');
                         }
                         return;

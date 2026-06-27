@@ -3,14 +3,18 @@ namespace Tests\Unit\Exports\Reports;
 
 use Tests\TestCase;
 use App\Exports\Reports\AuditExport;
+use App\DTOs\Reports\AuditReportFilterDTO;
+use App\Repositories\Reports\AuditReportRepository;
+use Illuminate\Database\Eloquent\Builder;
+use Mockery;
 
 class AuditExportTest extends TestCase
 {
     public function test_export_headings_and_mapping()
     {
-        $filters = \App\DTOs\Reports\AuditReportFilterDTO::fromArray([]);
-        $repoMock = \Mockery::mock(\App\Repositories\Reports\AuditReportRepository::class);
-        $queryMock = \Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+        $filters = AuditReportFilterDTO::fromArray([]);
+        $repoMock = Mockery::mock(AuditReportRepository::class);
+        $queryMock = Mockery::mock(Builder::class);
 
         $queryMock->shouldReceive('get')->andReturn(collect([
             (object) [
