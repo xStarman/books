@@ -78,6 +78,5 @@ Você também pode subir o ambiente de produção de forma totalmente automatiza
 Isso levantará os containers do GitLab, registrará um Runner local, configurará o repositório e executará os testes e o deploy de produção de forma automática ao realizar um `git push`.
 
 👉 **[Clique aqui para ver as instruções detalhadas do Ambiente de CI/CD (GitLab Local)](./demo/README.md)**
- 
 
 >
