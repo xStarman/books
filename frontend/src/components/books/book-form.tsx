@@ -271,3 +271,5 @@ export const BookForm = forwardRef<BookFormHandle, BookFormProps>(({ initialData
         </form>
     );
 });
+
+BookForm.displayName = 'BookForm';
