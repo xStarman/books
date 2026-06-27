@@ -20,9 +20,39 @@ class SaveBookRequest extends FormRequest
             'AnoPublicacao' => ['required', 'integer', 'min:1000', 'max:9999'],
             'Preco' => ['required', 'numeric', 'min:0'],
             'autores' => ['required', 'array', 'min:1'],
-            'autores.*' => ['integer', 'exists:autores,CodAu'],
+            'autores.*' => [
+                function ($attribute, $value, $fail) {
+                    if (is_numeric($value)) {
+                        if (!\App\Models\Autor::where('CodAu', $value)->exists()) {
+                            $fail('O autor selecionado é inválido.');
+                        }
+                        return;
+                    } 
+                    
+                    if (is_string($value) && str_starts_with($value, 'novo:')) {
+                        return;
+                    } 
+                    
+                    $fail('Formato de autor inválido.');
+                }
+            ],
             'assuntos' => ['required', 'array', 'min:1'],
-            'assuntos.*' => ['integer', 'exists:assuntos,CodAs'],
+            'assuntos.*' => [
+                function ($attribute, $value, $fail) {
+                    if (is_numeric($value)) {
+                        if (!\App\Models\Assunto::where('CodAs', $value)->exists()) {
+                            $fail('A categoria selecionada é inválida.');
+                        }
+                        return;
+                    } 
+                    
+                    if (is_string($value) && str_starts_with($value, 'novo:')) {
+                        return;
+                    } 
+                    
+                    $fail('Formato de categoria inválido.');
+                }
+            ],
         ];
     }
 

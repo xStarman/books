@@ -6,6 +6,7 @@ use App\Models\Autor;
 use App\DTOs\Authors\AuthorFiltersDTO;
 use App\DTOs\OrderDTO;
 use Illuminate\Database\Eloquent\Builder;
+use App\Exceptions\AuthorAlreadyExistsException;
 
 class AuthorRepository
 {
@@ -23,10 +24,31 @@ class AuthorRepository
             foreach ($orders as $order) {
                 $query->orderBy($order->field, $order->direction);
             }
-        } else {
-            $query->orderBy('CodAu', 'desc');
+            return $query;
+        } 
+        
+        $query->orderBy('CodAu', 'desc');
+        return $query;
+    }
+
+    public function save(array $data, ?int $id = null): Autor
+    {
+        $existingQuery = Autor::where('Nome', $data['Nome']);
+        
+        if ($id) {
+            $existingQuery->where('CodAu', '!=', $id);
         }
 
-        return $query;
+        if ($existingQuery->lockForUpdate()->exists()) {
+            throw new AuthorAlreadyExistsException();
+        }
+
+        if ($id) {
+            $autor = Autor::findOrFail($id);
+            $autor->update($data);
+            return $autor;
+        }
+
+        return Autor::create($data);
     }
 }

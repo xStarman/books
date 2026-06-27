@@ -51,4 +51,37 @@ class SubjectRepositoryTest extends TestCase
 
         $this->assertStringContainsString('order by "CodAs" desc', $query->toSql());
     }
+
+    public function test_save_creates_new_subject()
+    {
+        $repository = new SubjectRepository();
+        $descricao = 'Subj ' . \Illuminate\Support\Str::random(4);
+
+        $assunto = $repository->save(['Descricao' => $descricao]);
+
+        $this->assertEquals($descricao, $assunto->Descricao);
+        $this->assertDatabaseHas('assuntos', ['Descricao' => $descricao]);
+    }
+
+    public function test_save_updates_existing_subject()
+    {
+        $repository = new SubjectRepository();
+        $assunto = Assunto::create(['Descricao' => 'Old ' . \Illuminate\Support\Str::random(4)]);
+        $novaDesc = 'New ' . \Illuminate\Support\Str::random(4);
+
+        $atualizado = $repository->save(['Descricao' => $novaDesc], $assunto->CodAs);
+
+        $this->assertEquals($novaDesc, $atualizado->Descricao);
+        $this->assertDatabaseHas('assuntos', ['CodAs' => $assunto->CodAs, 'Descricao' => $novaDesc]);
+    }
+
+    public function test_save_throws_exception_on_duplicate_description()
+    {
+        $repository = new SubjectRepository();
+        $descricao = 'Dup ' . \Illuminate\Support\Str::random(4);
+        Assunto::create(['Descricao' => $descricao]);
+
+        $this->expectException(\App\Exceptions\SubjectAlreadyExistsException::class);
+        $repository->save(['Descricao' => $descricao]);
+    }
 }

@@ -47,4 +47,37 @@ class AuthorRepositoryTest extends TestCase
         
         $this->assertStringContainsString('order by "CodAu" desc', $query->toSql());
     }
+
+    public function test_save_creates_new_author()
+    {
+        $repository = new AuthorRepository();
+        $nome = 'Autor Repo ' . \Illuminate\Support\Str::random(8);
+
+        $autor = $repository->save(['Nome' => $nome]);
+
+        $this->assertEquals($nome, $autor->Nome);
+        $this->assertDatabaseHas('autores', ['Nome' => $nome]);
+    }
+
+    public function test_save_updates_existing_author()
+    {
+        $repository = new AuthorRepository();
+        $autor = Autor::create(['Nome' => 'Velho ' . \Illuminate\Support\Str::random(8)]);
+        $novoNome = 'Atualizado ' . \Illuminate\Support\Str::random(8);
+
+        $atualizado = $repository->save(['Nome' => $novoNome], $autor->CodAu);
+
+        $this->assertEquals($novoNome, $atualizado->Nome);
+        $this->assertDatabaseHas('autores', ['CodAu' => $autor->CodAu, 'Nome' => $novoNome]);
+    }
+
+    public function test_save_throws_exception_on_duplicate_name()
+    {
+        $repository = new AuthorRepository();
+        $nome = 'Duplicado ' . \Illuminate\Support\Str::random(8);
+        Autor::create(['Nome' => $nome]);
+
+        $this->expectException(\App\Exceptions\AuthorAlreadyExistsException::class);
+        $repository->save(['Nome' => $nome]);
+    }
 }

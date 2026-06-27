@@ -6,6 +6,7 @@ use App\Models\Assunto;
 use App\DTOs\Subjects\SubjectFiltersDTO;
 use App\DTOs\OrderDTO;
 use Illuminate\Database\Eloquent\Builder;
+use App\Exceptions\SubjectAlreadyExistsException;
 
 class SubjectRepository
 {
@@ -23,10 +24,31 @@ class SubjectRepository
             foreach ($orders as $order) {
                 $query->orderBy($order->field, $order->direction);
             }
-        } else {
-            $query->orderBy('CodAs', 'desc');
+            return $query;
+        } 
+        
+        $query->orderBy('CodAs', 'desc');
+        return $query;
+    }
+
+    public function save(array $data, ?int $id = null): Assunto
+    {
+        $existingQuery = Assunto::where('Descricao', $data['Descricao']);
+        
+        if ($id) {
+            $existingQuery->where('CodAs', '!=', $id);
         }
 
-        return $query;
+        if ($existingQuery->lockForUpdate()->exists()) {
+            throw new SubjectAlreadyExistsException();
+        }
+
+        if ($id) {
+            $assunto = Assunto::findOrFail($id);
+            $assunto->update($data);
+            return $assunto;
+        }
+
+        return Assunto::create($data);
     }
 }

@@ -1,22 +1,22 @@
-import { BookForm } from "../../components/books/book-form";
+import { BookForm, BookFormHandle } from "../../components/books/book-form";
 import Link from "next/link";
-import Head from "next/head";
+import { Title } from "../../components/base/title";
+import { IsbnSearchPopover } from "../../components/books/isbn-search-popover";
+import { useRef } from "react";
 
 export default function NovoLivro() {
+    const bookFormRef = useRef<BookFormHandle>(null);
     return (
         <>
-            <Head>
-                <title>Cadastrar novo livro</title>
-            </Head>
-            <div className="d-flex align-items-center justify-content-between mb-4">
-                <h2>Cadastrar novo livro</h2>
+            <Title title="Cadastrar novo livro">
+                <IsbnSearchPopover onImport={(data) => bookFormRef.current?.importData(data)} />
                 <Link href="/livros" className="btn btn-primary d-flex align-items-center gap-2">
                     <i className="bi bi-arrow-left"></i> Voltar
                 </Link>
-            </div>
+            </Title>
 
             <div className="container-sm" style={{ maxWidth: "800px" }}>
-                <BookForm />
+                <BookForm ref={bookFormRef} />
             </div>
         </>
     );

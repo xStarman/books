@@ -5,11 +5,12 @@ import { Input } from "../base/input";
 import { MoneyInput } from "../base/money-input";
 import { AuthorSelect } from "../authors/author-select";
 import { SubjectSelect } from "../subjects/subject-select";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { saveBook } from "../../lib/save-book";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { Book } from "../../lib/entities/book.entity";
+import { forwardRef, useImperativeHandle, useState } from "react";
 
 const schema = z.object({
     Titulo: z.string().min(1, "O título é obrigatório").max(40, "Máximo de 40 caracteres"),
@@ -29,8 +30,8 @@ const schema = z.object({
         }
         return typeof val === 'number' && !isNaN(val) ? val : -1;
     }, z.number().min(0, "O preço é obrigatório e não pode ser negativo")),
-    autores: z.array(z.number()).min(1, "Selecione pelo menos um autor"),
-    assuntos: z.array(z.number()).min(1, "Selecione pelo menos uma categoria"),
+    autores: z.array(z.union([z.number(), z.string()])).min(1, "Selecione pelo menos um autor"),
+    assuntos: z.array(z.union([z.number(), z.string()])).min(1, "Selecione pelo menos uma categoria"),
 });
 
 export type BookFormData = z.infer<typeof schema>;
@@ -39,10 +40,16 @@ type BookFormProps = {
     initialData?: Book;
 };
 
-export const BookForm = ({ initialData }: BookFormProps) => {
-    const router = useRouter();
+export type BookFormHandle = {
+    importData: (data: any) => void;
+};
 
-    const { register, handleSubmit, control, setError, formState: { errors, isSubmitting } } = useForm<BookFormData>({
+export const BookForm = forwardRef<BookFormHandle, BookFormProps>(({ initialData }, ref) => {
+    const router = useRouter();
+    const queryClient = useQueryClient();
+    const [highlightedFields, setHighlightedFields] = useState<Record<string, boolean>>({});
+
+    const { register, handleSubmit, control, setError, setValue, formState: { errors, isSubmitting } } = useForm<BookFormData>({
         resolver: zodResolver(schema as any),
         defaultValues: {
             Titulo: initialData?.Titulo || "",
@@ -55,9 +62,63 @@ export const BookForm = ({ initialData }: BookFormProps) => {
         }
     });
 
+    useImperativeHandle(ref, () => ({
+        importData: (bookData: any) => {
+            const newHighlights: Record<string, boolean> = {};
+
+            if (bookData.Titulo) {
+                setValue('Titulo', bookData.Titulo, { shouldValidate: true });
+                newHighlights.Titulo = true;
+            }
+            if (bookData.Editora) {
+                setValue('Editora', bookData.Editora, { shouldValidate: true });
+                newHighlights.Editora = true;
+            }
+            if (bookData.AnoPublicacao) {
+                setValue('AnoPublicacao', Number(bookData.AnoPublicacao), { shouldValidate: true });
+                newHighlights.AnoPublicacao = true;
+            }
+
+            const allAuthors = queryClient.getQueryData<any[]>(['authors', 'all']) || [];
+            const allSubjects = queryClient.getQueryData<any[]>(['subjects', 'all']) || [];
+
+            const newAuthors = (bookData.autores || []).map((a: string) => {
+                const existing = allAuthors.find(ea => ea.Nome.toLowerCase() === a.toLowerCase());
+                return existing ? existing.CodAu : `novo:${a}`;
+            });
+            if (newAuthors.length > 0) {
+                setValue('autores', newAuthors, { shouldValidate: true });
+                newHighlights.autores = true;
+            }
+
+            const newSubjects = (bookData.assuntos || []).map((s: string) => {
+                const existing = allSubjects.find(es => es.Descricao.toLowerCase() === s.toLowerCase());
+                return existing ? existing.CodAs : `novo:${s}`;
+            });
+            if (newSubjects.length > 0) {
+                setValue('assuntos', newSubjects, { shouldValidate: true });
+                newHighlights.assuntos = true;
+            }
+
+            setHighlightedFields(newHighlights);
+            setTimeout(() => {
+                setHighlightedFields({});
+            }, 1500);
+        }
+    }));
+
     const mutation = useMutation({
         mutationFn: (data: BookFormData) => saveBook(data as any, initialData?.CodL),
-        onSuccess: () => {
+        onSuccess: (data, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['books'] });
+            
+            if (variables.autores?.some(a => typeof a === 'string' && a.startsWith('novo:'))) {
+                queryClient.invalidateQueries({ queryKey: ['authors'] });
+            }
+            if (variables.assuntos?.some(s => typeof s === 'string' && s.startsWith('novo:'))) {
+                queryClient.invalidateQueries({ queryKey: ['subjects'] });
+            }
+
             toast.success(`Livro ${initialData ? 'atualizado' : 'cadastrado'} com sucesso!`);
             if (!initialData) {
                 router.push('/livros');
@@ -68,10 +129,13 @@ export const BookForm = ({ initialData }: BookFormProps) => {
                 const msg = error.response.data?.message;
                 if (msg === 'book_already_exists') {
                     toast.error("Já existe um livro cadastrado com este Título, Editora, Edição e Ano.");
-                } else {
-                    toast.error("Conflito ao salvar o livro.");
-                }
-            } else if (error?.response?.status === 422) {
+                    return;
+                } 
+                toast.error("Conflito ao salvar o livro.");
+                return;
+            } 
+            
+            if (error?.response?.status === 422) {
                 const validationErrors = error.response.data.errors;
                 Object.keys(validationErrors).forEach((key) => {
                     const fieldName = key.split('.')[0] as keyof BookFormData;
@@ -81,9 +145,10 @@ export const BookForm = ({ initialData }: BookFormProps) => {
                     });
                 });
                 toast.warning("Verifique os campos com erro.");
-            } else {
-                toast.error("Ocorreu um erro inesperado ao salvar.");
-            }
+                return;
+            } 
+            
+            toast.error("Ocorreu um erro inesperado ao salvar.");
         }
     });
 
@@ -99,6 +164,7 @@ export const BookForm = ({ initialData }: BookFormProps) => {
                         label="Título"
                         placeholder="Preencha com o título do livro"
                         error={errors.Titulo?.message}
+                        className={highlightedFields.Titulo ? "flash-green" : ""}
                         {...register("Titulo")}
                     />
 
@@ -107,6 +173,7 @@ export const BookForm = ({ initialData }: BookFormProps) => {
                             label="Editora"
                             placeholder="Preencha o nome da editora"
                             error={errors.Editora?.message}
+                            className={highlightedFields.Editora ? "flash-green" : ""}
                             {...register("Editora")}
                         />
                     </div>
@@ -130,6 +197,7 @@ export const BookForm = ({ initialData }: BookFormProps) => {
                             min="1000"
                             max="9999"
                             error={errors.AnoPublicacao?.message}
+                            className={highlightedFields.AnoPublicacao ? "flash-green" : ""}
                             {...register("AnoPublicacao")}
                         />
                     </div>
@@ -153,9 +221,10 @@ export const BookForm = ({ initialData }: BookFormProps) => {
                 </div>
 
                 <div className="col-12 col-md-6">
-                    <Controller
-                        control={control}
-                        name="autores"
+                    <div className={highlightedFields.autores ? "flash-green-container" : ""}>
+                        <Controller
+                            control={control}
+                            name="autores"
                         render={({ field }) => (
                             <AuthorSelect
                                 isMulti
@@ -168,8 +237,9 @@ export const BookForm = ({ initialData }: BookFormProps) => {
                             />
                         )}
                     />
+                    </div>
 
-                    <div className="mt-4">
+                    <div className={`mt-4 ${highlightedFields.assuntos ? "flash-green-container" : ""}`}>
                         <Controller
                             control={control}
                             name="assuntos"
@@ -200,4 +270,4 @@ export const BookForm = ({ initialData }: BookFormProps) => {
             </div>
         </form>
     );
-};
+});

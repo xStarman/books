@@ -20,6 +20,7 @@ use App\Http\Controllers\Subjects\GetSubjectByIdController;
 use App\Http\Controllers\Subjects\DeleteSubjectController;
 use App\Http\Controllers\Reports\ReportBookController;
 use App\Http\Controllers\Reports\ReportAuditController;
+use App\Http\Controllers\Isbn\GetIsbnController;
 
 Route::prefix('reports')->group(function () {
     Route::get('/books', ReportBookController::class);
@@ -59,4 +60,8 @@ Route::prefix('subjects')->group(function () {
         Route::put('/', UpdateSubjectController::class);
         Route::delete('/', DeleteSubjectController::class);
     });
+});
+
+Route::prefix('isbn')->group(function () {
+    Route::get('/{isbn}', GetIsbnController::class);
 });

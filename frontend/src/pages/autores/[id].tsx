@@ -1,6 +1,6 @@
 import { AuthorForm } from "../../components/authors/author-form";
 import Link from "next/link";
-import Head from "next/head";
+import { Title } from "../../components/base/title";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import { getAuthorById } from "../../lib/get-author-by-id";
@@ -27,15 +27,11 @@ export default function EditarAutor() {
 
     return (
         <>
-            <Head>
-                <title>Editar autor - {autor.Nome}</title>
-            </Head>
-            <div className="d-flex align-items-center justify-content-between mb-4">
-                <h2>Editar autor</h2>
+            <Title title={`Editar autor - ${autor.Nome}`}>
                 <Link href="/autores" className="btn btn-primary d-flex align-items-center gap-2">
                     <i className="bi bi-arrow-left"></i> Voltar
                 </Link>
-            </div>
+            </Title>
 
             <div className="container-sm" style={{ maxWidth: "800px" }}>
                 <AuthorForm initialData={autor} />

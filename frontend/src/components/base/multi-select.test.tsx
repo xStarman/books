@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MultiSelect } from './multi-select'
+import { faker } from '@faker-js/faker'
 
 describe('MultiSelect', () => {
   const defaultOptions = [
@@ -13,17 +14,19 @@ describe('MultiSelect', () => {
   })
 
   it('should render label and placeholder', () => {
+    const label = faker.lorem.words(2)
+    const placeholder = faker.lorem.words(2)
     render(
       <MultiSelect
-        label="My Select"
+        label={label}
         options={defaultOptions}
         value={[]}
         onChange={mockOnChange}
-        placeholder="Choose..."
+        placeholder={placeholder}
       />
     )
-    expect(screen.getByText('My Select')).toBeInTheDocument()
-    expect(screen.getByText('Choose...')).toBeInTheDocument()
+    expect(screen.getByText(label)).toBeInTheDocument()
+    expect(screen.getByText(placeholder)).toBeInTheDocument()
   })
 
   it('should show no items selected message when empty', () => {
@@ -57,5 +60,47 @@ describe('MultiSelect', () => {
     const removeBtns = screen.getAllByRole('button').filter(b => b.querySelector('.bi-dash-square'))
     fireEvent.click(removeBtns[0])
     expect(mockOnChange).toHaveBeenCalledWith([2])
+  })
+
+  it('should render dynamic "novo:" items with badge', () => {
+    const newName = faker.person.fullName()
+    render(
+      <MultiSelect
+        options={defaultOptions}
+        value={[`novo:${newName}`]}
+        onChange={mockOnChange}
+      />
+    )
+    expect(screen.getByText(newName)).toBeInTheDocument()
+    expect(screen.getByText('novo')).toBeInTheDocument()
+    expect(screen.getByText('novo')).toHaveClass('badge', 'bg-success')
+  })
+
+  it('should render mixed existing and dynamic items', () => {
+    const newWord = faker.lorem.word()
+    render(
+      <MultiSelect
+        options={defaultOptions}
+        value={['1', `novo:${newWord}`]}
+        onChange={mockOnChange}
+      />
+    )
+    expect(screen.getByText('Option 1')).toBeInTheDocument()
+    expect(screen.getByText(newWord)).toBeInTheDocument()
+    expect(screen.getByText('novo')).toBeInTheDocument()
+  })
+
+  it('should be able to remove dynamic items', () => {
+    const newEntity = faker.company.name()
+    render(
+      <MultiSelect
+        options={defaultOptions}
+        value={[`novo:${newEntity}`]}
+        onChange={mockOnChange}
+      />
+    )
+    const removeBtns = screen.getAllByRole('button').filter(b => b.querySelector('.bi-dash-square'))
+    fireEvent.click(removeBtns[0])
+    expect(mockOnChange).toHaveBeenCalledWith([])
   })
 })

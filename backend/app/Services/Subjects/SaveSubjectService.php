@@ -3,28 +3,16 @@
 namespace App\Services\Subjects;
 
 use App\Models\Assunto;
-use App\Exceptions\SubjectAlreadyExistsException;
+use App\Repositories\Subjects\SubjectRepository;
 
 class SaveSubjectService
 {
+    public function __construct(private SubjectRepository $subjectRepository)
+    {
+    }
+
     public function execute(array $data, ?int $id = null): Assunto
     {
-        $existingQuery = Assunto::where('Descricao', $data['Descricao']);
-        
-        if ($id) {
-            $existingQuery->where('CodAs', '!=', $id);
-        }
-
-        if ($existingQuery->lockForUpdate()->exists()) {
-            throw new SubjectAlreadyExistsException();
-        }
-
-        if ($id) {
-            $assunto = Assunto::findOrFail($id);
-            $assunto->update($data);
-            return $assunto;
-        }
-
-        return Assunto::create($data);
+        return $this->subjectRepository->save($data, $id);
     }
 }

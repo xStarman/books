@@ -14,15 +14,11 @@ class BooksControllerTest extends TestCase
     {
         $unique = Str::random(8);
         $authorResponse = $this->postJson('/api/authors', ['Nome' => 'Autor ' . $unique]);
-        if ($authorResponse->status() !== 201) {
-            dd('Author failed', $authorResponse->json());
-        }
+        $authorResponse->assertStatus(201);
         $author = $authorResponse->json();
 
         $subjectResponse = $this->postJson('/api/subjects', ['Descricao' => 'Subj ' . $unique]);
-        if ($subjectResponse->status() !== 201) {
-            dd('Subject failed', $subjectResponse->json());
-        }
+        $subjectResponse->assertStatus(201);
         $subject = $subjectResponse->json();
 
         return [$author['CodAu'] ?? null, $subject['CodAs'] ?? null];
@@ -126,5 +122,86 @@ class BooksControllerTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('livros', ['CodL' => $book['CodL']]);
+    }
+
+    public function test_can_create_book_with_dynamic_authors()
+    {
+        [, $subjectId] = $this->createDependencies();
+        $nomeAutor = 'Novo Autor Feature ' . Str::random(8);
+
+        $payload = [
+            'Titulo' => 'Livro Dinamico ' . Str::random(8),
+            'Editora' => 'Editora Feature',
+            'Edicao' => 1,
+            'AnoPublicacao' => 2024,
+            'Preco' => 50.00,
+            'autores' => ["novo:{$nomeAutor}"],
+            'assuntos' => [$subjectId]
+        ];
+
+        $response = $this->postJson('/api/books', $payload);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('autores', ['Nome' => $nomeAutor]);
+        $this->assertDatabaseHas('livros', ['Titulo' => $payload['Titulo']]);
+    }
+
+    public function test_can_create_book_with_dynamic_subjects()
+    {
+        [$authorId] = $this->createDependencies();
+        $descAssunto = 'Novo Subj ' . Str::random(4);
+
+        $payload = [
+            'Titulo' => 'Livro Subj Din ' . Str::random(8),
+            'Editora' => 'Editora Feature',
+            'Edicao' => 1,
+            'AnoPublicacao' => 2024,
+            'Preco' => 50.00,
+            'autores' => [$authorId],
+            'assuntos' => ["novo:{$descAssunto}"]
+        ];
+
+        $response = $this->postJson('/api/books', $payload);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('assuntos', ['Descricao' => $descAssunto]);
+    }
+
+    public function test_rejects_invalid_author_format()
+    {
+        [, $subjectId] = $this->createDependencies();
+
+        $payload = [
+            'Titulo' => 'Livro Invalid ' . Str::random(8),
+            'Editora' => 'Editora Feature',
+            'Edicao' => 1,
+            'AnoPublicacao' => 2024,
+            'Preco' => 50.00,
+            'autores' => ['invalido'],
+            'assuntos' => [$subjectId]
+        ];
+
+        $response = $this->postJson('/api/books', $payload);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_rejects_non_existent_author_id()
+    {
+        [, $subjectId] = $this->createDependencies();
+
+        $payload = [
+            'Titulo' => 'Livro Ghost ' . Str::random(8),
+            'Editora' => 'Editora Feature',
+            'Edicao' => 1,
+            'AnoPublicacao' => 2024,
+            'Preco' => 50.00,
+            'autores' => [999999],
+            'assuntos' => [$subjectId]
+        ];
+
+        $response = $this->postJson('/api/books', $payload);
+
+        $response->assertStatus(422);
     }
 }

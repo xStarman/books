@@ -31,7 +31,14 @@ export const MultiSelect = ({ label, options, value, onChange, placeholder, erro
         onChange(value.filter(id => id !== idToRemove));
     };
 
-    const selectedOptions = value.map(id => options.find(o => o.value == id)).filter(Boolean) as Option[];
+    const selectedOptions = value.map(id => {
+        const found = options.find(o => o.value == id);
+        if (found) return found;
+        if (typeof id === 'string' && id.startsWith('novo:')) {
+            return { label: id.replace('novo:', ''), value: id, isNew: true };
+        }
+        return null;
+    }).filter(Boolean) as (Option & { isNew?: boolean })[];
 
     return (
         <div className="d-flex flex-column gap-1">
@@ -62,13 +69,16 @@ export const MultiSelect = ({ label, options, value, onChange, placeholder, erro
 
             {error && <div className="invalid-feedback d-block mt-0 mb-2">{error}</div>}
 
-            <div className="bg-light-subtle rounded p-2" style={{ minHeight: '46px', border: '1px dashed var(--bs-border-color)' }}>
+            <div className="bg-light-subtle rounded p-2" style={{ maxHeight: '200px', overflowY: 'auto', minHeight: '46px', border: '1px dashed var(--bs-border-color)' }}>
                 {selectedOptions.length === 0 && (
                     <div className="text-muted small text-center mt-1">Nenhum item selecionado</div>
                 )}
                 {selectedOptions.map(opt => (
                     <div key={opt.value} className="d-flex justify-content-between align-items-center mb-1">
-                        <span className="small text-truncate" style={{ maxWidth: '90%' }}>{opt.label}</span>
+                        <span className="small text-truncate" style={{ maxWidth: '90%' }}>
+                            {opt.label}
+                            {opt.isNew && <span className="badge bg-success ms-2">novo</span>}
+                        </span>
                         <button
                             type="button"
                             className="btn py-0 px-2"
