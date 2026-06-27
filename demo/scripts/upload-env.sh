@@ -1,14 +1,17 @@
 #!/bin/bash
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$DIR/../.."
+
 # Criar .env.prod se não existirem
-if [ ! -f "frontend/.env.prod" ]; then
-    echo "⚠️  Aviso: frontend/.env.prod não encontrado. Criando a partir do .env.example..."
-    cp frontend/.env.example frontend/.env.prod || touch frontend/.env.prod
+if [ ! -f "$PROJECT_ROOT/frontend/.env.prod" ]; then
+    echo "Aviso: frontend/.env.prod não encontrado. Criando a partir do .env.example..."
+    cp "$PROJECT_ROOT/frontend/.env.example" "$PROJECT_ROOT/frontend/.env.prod" || touch "$PROJECT_ROOT/frontend/.env.prod"
 fi
 
-if [ ! -f "backend/.env.prod" ]; then
-    echo "⚠️  Aviso: backend/.env.prod não encontrado. Criando a partir do .env.example..."
-    cp backend/.env.example backend/.env.prod || touch backend/.env.prod
+if [ ! -f "$PROJECT_ROOT/backend/.env.prod" ]; then
+    echo "Aviso: backend/.env.prod não encontrado. Criando a partir do .env.example..."
+    cp "$PROJECT_ROOT/backend/.env.example" "$PROJECT_ROOT/backend/.env.prod" || touch "$PROJECT_ROOT/backend/.env.prod"
 fi
 
 echo "Gerando Personal Access Token temporário via gitlab-rails (isso pode levar 2 minutinhos)..."
@@ -57,7 +60,7 @@ upload_var() {
     echo "Variável $key configurada!"
 }
 
-upload_var "FRONTEND_ENV_PROD" "frontend/.env.prod"
-upload_var "BACKEND_ENV_PROD" "backend/.env.prod"
+upload_var "FRONTEND_ENV_PROD" "$PROJECT_ROOT/frontend/.env.prod"
+upload_var "BACKEND_ENV_PROD" "$PROJECT_ROOT/backend/.env.prod"
 
 echo "Pronto! Variáveis configuradas com sucesso no GitLab!"
